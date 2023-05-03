@@ -1,6 +1,7 @@
 # Expense Tracker - Modern Expense Tracker website using React.js 
 
-![Expense Tracker](expense-tracker\Preview.png)
+![Alt text](expense-tracker/Preview.png?raw=true "Title")
+
 
 
 
