@@ -18,6 +18,7 @@ const CATEGORIES = [
   'Shopping',
   'Travel',
   'Education',
+  'Received Amount',
   'Other'
 ];
 
