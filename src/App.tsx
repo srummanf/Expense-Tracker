@@ -78,10 +78,20 @@ function App() {
       `${transaction.date},${transaction.type},${transaction.amount},${transaction.reason},${transaction.category || 'Other'}\n`
     );
     const blob = new Blob([...headers, ...csvData], { type: 'text/csv' });
+
+    // Get the current date
+    const now = new Date();
+    const day = now.getDate();
+    const monthName = now.toLocaleString('default', { month: 'long' });
+    const year = now.getFullYear();
+    const formattedDate = `${day}_${monthName}_${year}`;
+
+    // Set the filename with the formatted date
+    const filename = `financial_transaction_upto_${formattedDate}.csv`;
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'financial_transactions.csv';
+    a.download = filename;
     a.click();
     window.URL.revokeObjectURL(url);
   };
