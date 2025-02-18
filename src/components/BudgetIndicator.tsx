@@ -14,9 +14,10 @@ import {
 interface BudgetIndicatorProps {
   transactions: Transaction[];
   budgetLimit: BudgetLimit;
+  onBudgetChange: (amount: number) => void;
 }
 
-export function BudgetIndicator({ transactions, budgetLimit }: BudgetIndicatorProps) {
+export function BudgetIndicator({ transactions, budgetLimit, onBudgetChange }: BudgetIndicatorProps) {
   const getCurrentPeriodExpenses = () => {
     const now = new Date();
     let start: Date;
@@ -57,7 +58,17 @@ export function BudgetIndicator({ transactions, budgetLimit }: BudgetIndicatorPr
           <span className="text-gray-600">
             {budgetLimit.period.charAt(0).toUpperCase() + budgetLimit.period.slice(1)} Budget:
           </span>
-          <span className="font-medium">${budgetLimit.amount.toFixed(2)}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">$</span>
+            <input
+              type="number"
+              value={budgetLimit.amount}
+              onChange={(e) => onBudgetChange(parseFloat(e.target.value) || 0)}
+              className="w-24 px-2 py-1 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              step="100"
+            />
+          </div>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-gray-600">Current Spending:</span>

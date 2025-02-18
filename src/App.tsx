@@ -14,14 +14,21 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [budgetLimit] = useState<BudgetLimit>({
-    amount: 1000,
-    period: 'monthly'
+  const [budgetLimit, setBudgetLimit] = useState<BudgetLimit>(() => {
+    const saved = localStorage.getItem('budgetLimit');
+    return saved ? JSON.parse(saved) : {
+      amount: 1000,
+      period: 'monthly'
+    };
   });
 
   useEffect(() => {
     localStorage.setItem('transactions', JSON.stringify(transactions));
   }, [transactions]);
+
+  useEffect(() => {
+    localStorage.setItem('budgetLimit', JSON.stringify(budgetLimit));
+  }, [budgetLimit]);
 
   const handleAddTransaction = (formData: TransactionFormData) => {
     const newTransaction: Transaction = {
@@ -37,6 +44,14 @@ function App() {
       const updated = [...prev, newTransaction];
       return updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     });
+  };
+
+  const handleEditTransaction = (updatedTransaction: Transaction) => {
+    setTransactions(prev => 
+      prev.map(t => 
+        t.id === updatedTransaction.id ? updatedTransaction : t
+      ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    );
   };
 
   const handleDeleteTransaction = (id: string) => {
@@ -87,7 +102,8 @@ function App() {
     const formattedDate = `${day}_${monthName}_${year}`;
 
     // Set the filename with the formatted date
-    const filename = `financial_transaction_upto_${formattedDate}.csv`;
+    const filename = `financial_transaction_${formattedDate}.csv`;
+
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -105,6 +121,10 @@ function App() {
     .reduce((sum, t) => sum + t.amount, 0);
 
   const balance = totalRevenue - totalExpenses;
+
+  const handleBudgetChange = (amount: number) => {
+    setBudgetLimit(prev => ({ ...prev, amount }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -162,13 +182,15 @@ function App() {
                 <BudgetIndicator 
                   transactions={transactions}
                   budgetLimit={budgetLimit}
+                  onBudgetChange={handleBudgetChange}
                 />
                 <SpendingBreakdown transactions={transactions} />
               </div>
               <FinancialChart transactions={transactions} />
               <TransactionList 
                 transactions={transactions} 
-                onDelete={handleDeleteTransaction} 
+                onDelete={handleDeleteTransaction}
+                onEdit={handleEditTransaction}
               />
             </>
           )}
