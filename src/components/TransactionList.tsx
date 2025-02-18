@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { format } from 'date-fns';
-import { Trash2, Edit2, X, Check, ChevronLeft, ChevronRight } from 'lucide-react';
-import type { Transaction } from '../types';
-import { Button } from './ui/button';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { format } from "date-fns";
+import {
+  Trash2,
+  Edit2,
+  X,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import type { Transaction } from "../types";
+import { Button } from "./ui/button";
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -13,27 +20,37 @@ interface TransactionListProps {
 
 const ITEMS_PER_PAGE = 10;
 const CATEGORIES = [
-  'Food & Dining',
-  'Transportation',
-  'Housing',
-  'Utilities',
-  'Healthcare',
-  'Entertainment',
-  'Shopping',
-  'Travel',
-  'Education',
-  'Amount Received',
-  'Other'
+  "Food & Dining",
+  "Transportation",
+  "Housing",
+  "Utilities",
+  "Healthcare",
+  "Entertainment",
+  "Shopping",
+  "Travel",
+  "Education",
+  "Amount Received",
+  "Other",
 ];
 
-export function TransactionList({ transactions, onDelete, onEdit }: TransactionListProps) {
+export function TransactionList({
+  transactions,
+  onDelete,
+  onEdit,
+}: TransactionListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Transaction | null>(null);
 
   const totalPages = Math.ceil(transactions.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedTransactions = transactions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const sortedTransactions = [...transactions].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+  const paginatedTransactions = sortedTransactions.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
   const handleEditClick = (transaction: Transaction) => {
     setEditingId(transaction.id);
@@ -59,12 +76,24 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50 text-left">
-              <th className="px-6 py-3 text-sm font-medium text-gray-500">Date</th>
-              <th className="px-6 py-3 text-sm font-medium text-gray-500">Type</th>
-              <th className="px-6 py-3 text-sm font-medium text-gray-500">Amount</th>
-              <th className="px-6 py-3 text-sm font-medium text-gray-500">Category</th>
-              <th className="px-6 py-3 text-sm font-medium text-gray-500">Reason</th>
-              <th className="px-6 py-3 text-sm font-medium text-gray-500">Actions</th>
+              <th className="px-6 py-3 text-sm font-medium text-gray-500">
+                Date
+              </th>
+              <th className="px-6 py-3 text-sm font-medium text-gray-500">
+                Type
+              </th>
+              <th className="px-6 py-3 text-sm font-medium text-gray-500">
+                Amount
+              </th>
+              <th className="px-6 py-3 text-sm font-medium text-gray-500">
+                Category
+              </th>
+              <th className="px-6 py-3 text-sm font-medium text-gray-500">
+                Reason
+              </th>
+              <th className="px-6 py-3 text-sm font-medium text-gray-500">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -81,45 +110,68 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
                     {editingId === transaction.id ? (
                       <input
                         type="date"
-                        value={editForm?.date || ''}
-                        onChange={(e) => setEditForm(prev => prev ? { ...prev, date: e.target.value } : null)}
+                        value={editForm?.date || ""}
+                        onChange={(e) =>
+                          setEditForm((prev) =>
+                            prev ? { ...prev, date: e.target.value } : null
+                          )
+                        }
                         className="w-full px-2 py-1 border border-gray-200 rounded-md"
                       />
                     ) : (
-                      format(new Date(transaction.date), 'MMM dd, yyyy')
+                      format(new Date(transaction.date), "MMM dd, yyyy")
                     )}
                   </td>
                   <td className="px-6 py-4 text-sm">
                     {editingId === transaction.id ? (
                       <select
-                        value={editForm?.type || 'expense'}
-                        onChange={(e) => setEditForm(prev => prev ? { ...prev, type: e.target.value as 'expense' | 'revenue' } : null)}
+                        value={editForm?.type || "expense"}
+                        onChange={(e) =>
+                          setEditForm((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  type: e.target.value as "expense" | "revenue",
+                                }
+                              : null
+                          )
+                        }
                         className="w-full px-2 py-1 border border-gray-200 rounded-md"
                       >
                         <option value="expense">Expense</option>
                         <option value="revenue">Revenue</option>
                       </select>
                     ) : (
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        transaction.type === 'revenue' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {transaction.type === 'revenue' ? 'Revenue' : 'Expense'}
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          transaction.type === "revenue"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {transaction.type === "revenue" ? "Revenue" : "Expense"}
                       </span>
                     )}
                   </td>
-                  <td className={`px-6 py-4 text-sm font-medium ${
-                    transaction.type === 'revenue' 
-                      ? 'text-green-600' 
-                      : 'text-red-600'
-                  }`}>
+                  <td
+                    className={`px-6 py-4 text-sm font-medium ${
+                      transaction.type === "revenue"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
                     {editingId === transaction.id ? (
                       <input
                         type="number"
                         step="0.01"
                         value={editForm?.amount || 0}
-                        onChange={(e) => setEditForm(prev => prev ? { ...prev, amount: parseFloat(e.target.value) } : null)}
+                        onChange={(e) =>
+                          setEditForm((prev) =>
+                            prev
+                              ? { ...prev, amount: parseFloat(e.target.value) }
+                              : null
+                          )
+                        }
                         className="w-full px-2 py-1 border border-gray-200 rounded-md"
                       />
                     ) : (
@@ -129,24 +181,34 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
                   <td className="px-6 py-4 text-sm text-gray-900">
                     {editingId === transaction.id ? (
                       <select
-                        value={editForm?.category || 'Other'}
-                        onChange={(e) => setEditForm(prev => prev ? { ...prev, category: e.target.value } : null)}
+                        value={editForm?.category || "Other"}
+                        onChange={(e) =>
+                          setEditForm((prev) =>
+                            prev ? { ...prev, category: e.target.value } : null
+                          )
+                        }
                         className="w-full px-2 py-1 border border-gray-200 rounded-md"
                       >
-                        {CATEGORIES.map(category => (
-                          <option key={category} value={category}>{category}</option>
+                        {CATEGORIES.map((category) => (
+                          <option key={category} value={category}>
+                            {category}
+                          </option>
                         ))}
                       </select>
                     ) : (
-                      transaction.category || 'Other'
+                      transaction.category || "Other"
                     )}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     {editingId === transaction.id ? (
                       <input
                         type="text"
-                        value={editForm?.reason || ''}
-                        onChange={(e) => setEditForm(prev => prev ? { ...prev, reason: e.target.value } : null)}
+                        value={editForm?.reason || ""}
+                        onChange={(e) =>
+                          setEditForm((prev) =>
+                            prev ? { ...prev, reason: e.target.value } : null
+                          )
+                        }
                         className="w-full px-2 py-1 border border-gray-200 rounded-md"
                       />
                     ) : (
@@ -208,7 +270,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -232,7 +294,9 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
             >
               <ChevronRight className="h-4 w-4" />

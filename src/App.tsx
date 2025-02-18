@@ -6,6 +6,7 @@ import { TransactionList } from './components/TransactionList';
 import { FinancialChart } from './components/FinancialChart';
 import { SpendingBreakdown } from './components/SpendingBreakdown';
 import { BudgetIndicator } from './components/BudgetIndicator';
+import { ExpenseAnalysis } from './components/ExpenseAnalysis';
 import type { Transaction, TransactionFormData, BudgetLimit } from './types';
 
 function App() {
@@ -186,6 +187,7 @@ function App() {
                 />
                 <SpendingBreakdown transactions={transactions} />
               </div>
+              <ExpenseAnalysis transactions={transactions} />
               <FinancialChart transactions={transactions} />
               <TransactionList 
                 transactions={transactions} 
