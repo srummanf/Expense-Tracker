@@ -137,7 +137,7 @@ function App() {
         >
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Financial Tracker</h1>
+              <h1 className="text-3xl font-bold text-gray-900">Expense Tracker</h1>
               <div className="mt-2 space-y-1">
                 <p className="text-gray-600">
                   Total Revenue: <span className="text-green-600 font-medium">${totalRevenue.toFixed(2)}</span>
