@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 
-@import url('non.geist');
 
 body {
     @apply font-worksans;
