@@ -13,7 +13,9 @@ import {
   subWeeks,
   isSameWeek,
   startOfDay,
-  endOfDay
+  endOfDay,
+  subDays,
+  isWithinInterval
 } from "date-fns";
 import { motion } from "framer-motion";
 import {
@@ -228,27 +230,44 @@ export function ExpenseAnalysis({ transactions }: ExpenseAnalysisProps) {
       });
   };
 
-  // Cumulative Daily Pattern Data
-  const getCumulativeDailyPatternData = () => {
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dailyTotals: number[] = new Array(7).fill(0);
+// Function to compute cumulative spending for the latest Monday-to-Sunday week
+const getCumulativeDailyPatternData = () => {
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const dailyTotals: number[] = new Array(7).fill(0);
 
-    transactions
-      .filter(t => t.type === 'expense')
-      .forEach(t => {
-        const dayIndex = parseISO(t.date).getDay();
-        dailyTotals[dayIndex] += Math.abs(t.amount);
-      });
+  // Get today's date and the latest Monday (start of the week)
+  const today = new Date();
+  const latestMonday = startOfWeek(today, { weekStartsOn: 1 }); // Week starts on Monday
 
-    let cumulativeSum = 0;
-    return daysOfWeek.map((day, index) => {
-      cumulativeSum += dailyTotals[index];
-      return {
-        day,
-        amount: cumulativeSum,
-      };
-    });
-  };
+  // Define the date range: from latest Monday to today
+  const weekStart = latestMonday;
+  const weekEnd = today;
+
+  // Filter transactions for the latest Monday-to-Sunday week
+  const filteredTransactions = transactions.filter(t => {
+    const txnDate = parseISO(t.date);
+    return isWithinInterval(txnDate, { start: weekStart, end: weekEnd }) && t.type === 'expense';
+  });
+
+  // Populate daily totals based on the filtered transactions
+  filteredTransactions.forEach(t => {
+    const dayIndex = parseISO(t.date).getDay(); // Get day index (0 = Sunday, ..., 6 = Saturday)
+    
+    // Adjust index for Monday-first week
+    const adjustedIndex = (dayIndex + 6) % 7;
+    dailyTotals[adjustedIndex] += Math.abs(t.amount);
+  });
+
+  // Compute Cumulative Totals
+  let cumulativeSum = 0;
+  return daysOfWeek.map((day, index) => {
+    cumulativeSum += dailyTotals[index];
+    return {
+      day,
+      amount: cumulativeSum,
+    };
+  });
+};
 
   // Category Comparison Radar Data
   const getRadarData = () => {
