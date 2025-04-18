@@ -7,6 +7,7 @@ import { FinancialChart } from './components/FinancialChart';
 import { SpendingBreakdown } from './components/SpendingBreakdown';
 import { BudgetIndicator } from './components/BudgetIndicator';
 import { ExpenseAnalysis } from './components/ExpenseAnalysis';
+import { BigCalendar } from './components/BigCalendar';
 import type { Transaction, TransactionFormData, BudgetLimit } from './types';
 
 function App() {
@@ -179,6 +180,9 @@ function App() {
           
           {transactions.length > 0 && (
             <>
+              {/* Calendar View */}
+              <BigCalendar transactions={transactions} />
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <BudgetIndicator 
                   transactions={transactions}
