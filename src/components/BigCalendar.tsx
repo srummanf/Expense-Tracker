@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import * as Popover from '@radix-ui/react-popover';
-import { 
-  startOfMonth, 
-  endOfMonth, 
-  eachDayOfInterval, 
-  format, 
-  isSameMonth, 
+import React, { useState } from "react";
+import * as Popover from "@radix-ui/react-popover";
+import {
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  format,
+  isSameMonth,
   isSameDay,
   startOfWeek,
-  addDays
-} from 'date-fns';
-import type { Transaction } from '../types';
+  addDays,
+} from "date-fns";
+import type { Transaction } from "../types";
 
 interface BigCalendarProps {
   transactions: Transaction[];
@@ -23,28 +23,32 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const startDate = startOfWeek(monthStart);
-  
+
   // Generate all dates to display
   const calendarDays = eachDayOfInterval({
     start: startDate,
-    end: addDays(startDate, 41) // 6 weeks (to ensure we have enough days)
+    end: addDays(startDate, 41), // 6 weeks (to ensure we have enough days)
   });
 
   // Format header as "Month Year" (e.g., "April 2025")
-  const monthHeader = format(currentMonth, 'MMMM yyyy');
+  const monthHeader = format(currentMonth, "MMMM yyyy");
 
   // Navigate to previous/next month
   const prevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+    );
   };
 
   const nextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+    );
   };
 
   // Get transactions for a specific day
   const getTransactionsForDay = (day: Date) => {
-    return transactions.filter(transaction => 
+    return transactions.filter((transaction) =>
       isSameDay(new Date(transaction.date), day)
     );
   };
@@ -57,16 +61,20 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium text-gray-900">Transaction Calendar</h2>
+        <h2 className="text-lg font-medium text-gray-900">
+          Transaction Calendar
+        </h2>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={prevMonth}
             className="p-2 rounded-md hover:bg-gray-100 transition-colors"
           >
             &lt;
           </button>
-          <div className="font-medium">{monthHeader}</div>
-          <button 
+          <div className="flex flex-col items-center justify-center">
+            <div className="font-medium">{monthHeader}</div>
+          </div>
+          <button
             onClick={nextMonth}
             className="p-2 rounded-md hover:bg-gray-100 transition-colors"
           >
@@ -77,8 +85,11 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
 
       {/* Calendar Header (Days of week) */}
       <div className="grid grid-cols-7 gap-1 mb-2">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="text-center text-sm text-gray-500 font-medium py-2">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div
+            key={day}
+            className="text-center text-sm text-gray-500 font-medium py-2"
+          >
             {day}
           </div>
         ))}
@@ -90,19 +101,19 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
           const dayTransactions = getTransactionsForDay(day);
           const isCurrentMonth = isSameMonth(day, currentMonth);
           const hasTx = hasTransactions(day);
-          
+
           return (
             <Popover.Root key={i}>
               <Popover.Trigger asChild>
                 <div
                   className={`
                     relative h-24 p-2 border rounded-md cursor-pointer
-                    ${isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-400'}
-                    ${hasTx ? 'border-blue-300' : 'border-gray-200'}
+                    ${isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-400"}
+                    ${hasTx ? "border-blue-300" : "border-gray-200"}
                     hover:bg-gray-50 transition-colors
                   `}
                 >
-                  <div className="text-right">{format(day, 'd')}</div>
+                  <div className="text-right">{format(day, "d")}</div>
                   {hasTx && (
                     <div className="absolute bottom-2 left-0 right-0 flex justify-center">
                       <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500"></span>
@@ -110,7 +121,7 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
                   )}
                 </div>
               </Popover.Trigger>
-              
+
               {hasTx && (
                 <Popover.Portal>
                   <Popover.Content
@@ -118,18 +129,29 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
                     sideOffset={5}
                     align="center"
                   >
-                    <div className="mb-2 font-medium">{format(day, 'MMMM d, yyyy')}</div>
+                    <div className="mb-2 font-medium">
+                      {format(day, "MMMM d, yyyy")}
+                    </div>
                     <div className="max-h-80 overflow-y-auto space-y-2">
-                      {dayTransactions.map(transaction => (
-                        <div 
+                      {dayTransactions.map((transaction) => (
+                        <div
                           key={transaction.id}
                           className="p-3 border rounded-md bg-gray-50"
                         >
-                          <div className="font-medium">{transaction.reason}</div>
-                          <div className={`text-${transaction.type === 'expense' ? 'red' : 'green'}-600`}>
-                            {transaction.type === 'expense' ? '-' : '+'} ${transaction.amount.toFixed(2)}
+                          <div className="font-medium">
+                            {transaction.reason}
                           </div>
-                          <div className="text-xs text-gray-500">{transaction.category}</div>
+                          <div
+                            className={`text-${
+                              transaction.type === "expense" ? "red" : "green"
+                            }-600`}
+                          >
+                            {transaction.type === "expense" ? "-" : "+"} $
+                            {transaction.amount.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {transaction.category}
+                          </div>
                         </div>
                       ))}
                     </div>
