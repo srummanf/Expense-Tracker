@@ -58,6 +58,28 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
     return getTransactionsForDay(day).length > 0;
   };
 
+  // Get total expense amount for a specific day
+  const getDailyExpense = (day: Date) => {
+    return transactions
+      .filter((t) => t.type === "expense" && isSameDay(new Date(t.date), day))
+      .reduce((sum, t) => sum + t.amount, 0);
+  };
+
+  // Calculate the highest expense amount in the month for normalization
+  const maxExpense = calendarDays
+    .map((day) => getDailyExpense(day))
+    .reduce((max, expense) => (expense > max ? expense : max), 0);
+
+  // Generate color intensity based on expense amount (0-255)
+  const getHeatIntensity = (expense: number) => {
+    // Return transparent if no expense
+    if (expense === 0) return "rgba(255, 99, 71, 0)";
+
+    // Calculate intensity (0.1-0.9) with non-linear scaling for better visuals
+    const intensity = 0.1 + 0.8 * Math.pow(expense / (maxExpense || 1), 0.7);
+    return `rgba(255, 99, 71, ${intensity})`;
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-center mb-4">
@@ -100,6 +122,8 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
         {calendarDays.map((day, i) => {
           const dayTransactions = getTransactionsForDay(day);
           const isCurrentMonth = isSameMonth(day, currentMonth);
+          const expense = getDailyExpense(day);
+          const backgroundColor = getHeatIntensity(expense);
           const hasTx = hasTransactions(day);
 
           return (
@@ -112,8 +136,20 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
                     ${hasTx ? "border-blue-300" : "border-gray-200"}
                     hover:bg-gray-50 transition-colors
                   `}
+                  style={{ backgroundColor }}
                 >
                   <div className="text-right">{format(day, "d")}</div>
+                  {expense > 0 && (
+                    <div
+                      className={`text-sm mt-2 font-medium ${
+                        expense > maxExpense * 0.5
+                          ? "text-white"
+                          : "text-gray-800"
+                      }`}
+                    >
+                      ${expense.toFixed(0)}
+                    </div>
+                  )}
                   {hasTx && (
                     <div className="absolute bottom-2 left-0 right-0 flex justify-center">
                       <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500"></span>

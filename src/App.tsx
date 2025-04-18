@@ -1,38 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Download, Wallet } from 'lucide-react';
-import { TransactionForm } from './components/TransactionForm';
-import { TransactionList } from './components/TransactionList';
-import { FinancialChart } from './components/FinancialChart';
-import { SpendingBreakdown } from './components/SpendingBreakdown';
-import { BudgetIndicator } from './components/BudgetIndicator';
-import { ExpenseAnalysis } from './components/ExpenseAnalysis';
-import { BigCalendar } from './components/BigCalendar';
-import type { Transaction, TransactionFormData, BudgetLimit } from './types';
-import { CashFlowWaterfall } from './components/CashFlowWaterfall';
-import { MonthlySpendingHeatmap } from './components/MonthlySpendingHeatmap';
-import { RecurringTransactionsAnalysis } from './components/RecurringTransactionsAnalysis';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Download, Wallet } from "lucide-react";
+import { TransactionForm } from "./components/TransactionForm";
+import { TransactionList } from "./components/TransactionList";
+import { FinancialChart } from "./components/FinancialChart";
+import { SpendingBreakdown } from "./components/SpendingBreakdown";
+import { BudgetIndicator } from "./components/BudgetIndicator";
+import { ExpenseAnalysis } from "./components/ExpenseAnalysis";
+import { BigCalendar } from "./components/BigCalendar";
+import type { Transaction, TransactionFormData, BudgetLimit } from "./types";
+import { CashFlowWaterfall } from "./components/CashFlowWaterfall";
+import { MonthlySpendingHeatmap } from "./components/MonthlySpendingHeatmap";
+import { RecurringTransactionsAnalysis } from "./components/RecurringTransactionsAnalysis";
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    const saved = localStorage.getItem('transactions');
+    const saved = localStorage.getItem("transactions");
     return saved ? JSON.parse(saved) : [];
   });
 
   const [budgetLimit, setBudgetLimit] = useState<BudgetLimit>(() => {
-    const saved = localStorage.getItem('budgetLimit');
-    return saved ? JSON.parse(saved) : {
-      amount: 1000,
-      period: 'monthly'
-    };
+    const saved = localStorage.getItem("budgetLimit");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          amount: 1000,
+          period: "monthly",
+        };
   });
 
   useEffect(() => {
-    localStorage.setItem('transactions', JSON.stringify(transactions));
+    localStorage.setItem("transactions", JSON.stringify(transactions));
   }, [transactions]);
 
   useEffect(() => {
-    localStorage.setItem('budgetLimit', JSON.stringify(budgetLimit));
+    localStorage.setItem("budgetLimit", JSON.stringify(budgetLimit));
   }, [budgetLimit]);
 
   const handleAddTransaction = (formData: TransactionFormData) => {
@@ -47,62 +49,72 @@ function App() {
 
     setTransactions((prev) => {
       const updated = [...prev, newTransaction];
-      return updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      return updated.sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
     });
   };
 
   const handleEditTransaction = (updatedTransaction: Transaction) => {
-    setTransactions(prev => 
-      prev.map(t => 
-        t.id === updatedTransaction.id ? updatedTransaction : t
-      ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    setTransactions((prev) =>
+      prev
+        .map((t) => (t.id === updatedTransaction.id ? updatedTransaction : t))
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     );
   };
 
   const handleDeleteTransaction = (id: string) => {
-    setTransactions(transactions.filter(transaction => transaction.id !== id));
+    setTransactions(
+      transactions.filter((transaction) => transaction.id !== id)
+    );
   };
 
   const handleImportCSV = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
-      const lines = text.split('\n');
-      const headers = lines[0].split(',');
-      
-      const newTransactions: Transaction[] = lines.slice(1)
-        .filter(line => line.trim())
-        .map(line => {
-          const values = line.split(',');
+      const lines = text.split("\n");
+      const headers = lines[0].split(",");
+
+      const newTransactions: Transaction[] = lines
+        .slice(1)
+        .filter((line) => line.trim())
+        .map((line) => {
+          const values = line.split(",");
           return {
             id: crypto.randomUUID(),
-            date: values[headers.indexOf('Date')],
-            type: values[headers.indexOf('Type')] as 'expense' | 'revenue',
-            amount: parseFloat(values[headers.indexOf('Amount')]),
-            reason: values[headers.indexOf('Reason')],
-            category: values[headers.indexOf('Category')] || 'Other',
+            date: values[headers.indexOf("Date")],
+            type: values[headers.indexOf("Type")] as "expense" | "revenue",
+            amount: parseFloat(values[headers.indexOf("Amount")]),
+            reason: values[headers.indexOf("Reason")],
+            category: values[headers.indexOf("Category")] || "Other",
           };
         });
 
-      setTransactions(prev => {
+      setTransactions((prev) => {
         const updated = [...prev, ...newTransactions];
-        return updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        return updated.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
       });
     };
     reader.readAsText(file);
   };
 
   const exportToCSV = () => {
-    const headers = ['Date,Type,Amount,Reason,Category\n'];
-    const csvData = transactions.map(transaction => 
-      `${transaction.date},${transaction.type},${transaction.amount},${transaction.reason},${transaction.category || 'Other'}\n`
+    const headers = ["Date,Type,Amount,Reason,Category\n"];
+    const csvData = transactions.map(
+      (transaction) =>
+        `${transaction.date},${transaction.type},${transaction.amount},${
+          transaction.reason
+        },${transaction.category || "Other"}\n`
     );
-    const blob = new Blob([...headers, ...csvData], { type: 'text/csv' });
+    const blob = new Blob([...headers, ...csvData], { type: "text/csv" });
 
     // Get the current date
     const now = new Date();
     const day = now.getDate();
-    const monthName = now.toLocaleString('default', { month: 'long' });
+    const monthName = now.toLocaleString("default", { month: "long" });
     const year = now.getFullYear();
     const formattedDate = `${day}_${monthName}_${year}`;
 
@@ -110,7 +122,7 @@ function App() {
     const filename = `financial_transaction_${formattedDate}.csv`;
 
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = filename;
     a.click();
@@ -118,17 +130,17 @@ function App() {
   };
 
   const totalRevenue = transactions
-    .filter(t => t.type === 'revenue')
+    .filter((t) => t.type === "revenue")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalExpenses = transactions
-    .filter(t => t.type === 'expense')
+    .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const balance = totalRevenue - totalExpenses;
 
   const handleBudgetChange = (amount: number) => {
-    setBudgetLimit(prev => ({ ...prev, amount }));
+    setBudgetLimit((prev) => ({ ...prev, amount }));
   };
 
   return (
@@ -141,13 +153,21 @@ function App() {
         >
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Expense Tracker</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Expense Tracker
+              </h1>
               <div className="mt-2 space-y-1">
                 <p className="text-gray-600">
-                  Total Revenue: <span className="text-green-600 font-medium">${totalRevenue.toFixed(2)}</span>
+                  Total Revenue:{" "}
+                  <span className="text-green-600 font-medium">
+                    ${totalRevenue.toFixed(2)}
+                  </span>
                 </p>
                 <p className="text-gray-600">
-                  Total Expenses: <span className="text-red-600 font-medium">${totalExpenses.toFixed(2)}</span>
+                  Total Expenses:{" "}
+                  <span className="text-red-600 font-medium">
+                    ${totalExpenses.toFixed(2)}
+                  </span>
                 </p>
               </div>
             </div>
@@ -157,7 +177,9 @@ function App() {
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 0.5 }}
                 className={`flex items-center gap-2 px-6 py-3 rounded-lg ${
-                  balance >= 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                  balance >= 0
+                    ? "bg-green-50 text-green-700"
+                    : "bg-red-50 text-red-700"
                 }`}
               >
                 <Wallet size={24} />
@@ -176,20 +198,20 @@ function App() {
             </div>
           </div>
 
-          <TransactionForm 
+          <TransactionForm
             onSubmit={handleAddTransaction}
             onImportCSV={handleImportCSV}
           />
-          
+
           {transactions.length > 0 && (
             <>
               {/* Calendar View */}
               <BigCalendar transactions={transactions} />
               <CashFlowWaterfall transactions={transactions} />
-              <MonthlySpendingHeatmap transactions={transactions} />
+              {/* <MonthlySpendingHeatmap transactions={transactions} /> */}
               <RecurringTransactionsAnalysis transactions={transactions} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <BudgetIndicator 
+                <BudgetIndicator
                   transactions={transactions}
                   budgetLimit={budgetLimit}
                   onBudgetChange={handleBudgetChange}
@@ -198,8 +220,8 @@ function App() {
               </div>
               <ExpenseAnalysis transactions={transactions} />
               <FinancialChart transactions={transactions} />
-              <TransactionList 
-                transactions={transactions} 
+              <TransactionList
+                transactions={transactions}
                 onDelete={handleDeleteTransaction}
                 onEdit={handleEditTransaction}
               />
@@ -208,7 +230,9 @@ function App() {
 
           {transactions.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500">No transactions yet. Add your first transaction above!</p>
+              <p className="text-gray-500">
+                No transactions yet. Add your first transaction above!
+              </p>
             </div>
           )}
         </motion.div>
