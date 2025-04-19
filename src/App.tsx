@@ -8,6 +8,8 @@ import { SpendingBreakdown } from "./components/SpendingBreakdown";
 import { BudgetIndicator } from "./components/BudgetIndicator";
 import { ExpenseAnalysis } from "./components/ExpenseAnalysis";
 import { BigCalendar } from "./components/BigCalendar";
+import { NetWorthTimeline } from "./components/NetWorthTimeline"; // New component
+import { ExpenseForecast } from "./components/ExpenseForecast"; // New component
 import type { Transaction, TransactionFormData, BudgetLimit } from "./types";
 import { CashFlowWaterfall } from "./components/CashFlowWaterfall";
 import { MonthlySpendingHeatmap } from "./components/MonthlySpendingHeatmap";
@@ -207,8 +209,13 @@ function App() {
             <>
               {/* Calendar View */}
               <BigCalendar transactions={transactions} />
+              {/* Net Worth Timeline - New Component */}
+              <NetWorthTimeline transactions={transactions} />
+
+              {/* Expense Forecast - New Component */}
+              <ExpenseForecast transactions={transactions} />
+
               <CashFlowWaterfall transactions={transactions} />
-              {/* <MonthlySpendingHeatmap transactions={transactions} /> */}
               <RecurringTransactionsAnalysis transactions={transactions} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <BudgetIndicator
