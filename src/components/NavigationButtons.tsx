@@ -14,12 +14,15 @@ const NavigationButtons = () => {
     { id: "budgetIndicator", name: "Budget Indicator" },
     { id: "spendingBreakdown", name: "Spending Breakdown" },
     { id: "expenseAnalysis", name: "Expense Analysis" },
+    { id: "savingGoalTracker", name: "Savings Goal Tracker" },
+    { id: "FinancialHealthScore", name: "Financial Health Score" },
+    { id: "BillReminders", name: "Bill Reminders" },
     { id: "financialChart", name: "Financial Chart" },
     { id: "transactionList", name: "Transaction List" },
   ];
 
   return (
-    <div className="my-6">
+    <div className="my-9">
       <ScrollArea.Root className="w-full overflow-hidden">
         <ScrollArea.Viewport className="w-full h-full">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">

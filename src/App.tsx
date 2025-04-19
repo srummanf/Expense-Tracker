@@ -17,6 +17,9 @@ import { RecurringTransactionsAnalysis } from "./components/RecurringTransaction
 import { WeeklySpendingTrends } from "./components/WeeklySpendingTrends";
 import { MonthlySpendingCalendar } from "./components/MonthlySpendingCalendar";
 import NavigationButtons from "./components/NavigationButtons";
+import { SavingsGoalTracker } from "./components/SavingsGoalTracker";
+import { FinancialHealthScore } from "./components/FinancialHealthScore";
+import { BillReminders } from "./components/BillReminders";
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
@@ -277,6 +280,24 @@ function App() {
               <section id="expenseAnalysis" className="pt-4 mt-2">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Expense Analysis</h2>
                 <ExpenseAnalysis transactions={transactions} />
+              </section>
+              
+              {/* Savings Goal Tracker */}
+              <section id="savingGoalTracker" className="pt-4 mt-2">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Savings Goal Tracker</h2>
+                <SavingsGoalTracker transactions={transactions} />
+              </section>
+              
+              {/* Financial Health Score */}
+              <section id="FinancialHealthScore" className="pt-4 mt-2">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Financial Health Score</h2>
+                <FinancialHealthScore transactions={transactions} />
+              </section>
+
+              {/* Bill Reminders */}
+              <section id="BillReminders" className="pt-4 mt-2">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Bill Reminders</h2>
+                <BillReminders transactions={transactions} />
               </section>
               
               {/* Financial Chart */}
