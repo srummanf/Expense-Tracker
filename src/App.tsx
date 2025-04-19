@@ -20,6 +20,10 @@ import NavigationButtons from "./components/NavigationButtons";
 import { SavingsGoalTracker } from "./components/SavingsGoalTracker";
 import { FinancialHealthScore } from "./components/FinancialHealthScore";
 import { BillReminders } from "./components/BillReminders";
+import { InvestmentPortfolioTracker } from "./components/InvestmentPortfolioTracker";
+import { ExpenseToIncomeRatioTracker } from "./components/ExpenseToIncomeRatioTracker";
+import { DiscretionarySpendingAnalysis } from "./components/DiscretionarySpendingAnalysis";
+import { SavingsOpportunityFinder } from "./components/SavingsOpportunityFinder";
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
@@ -215,100 +219,160 @@ function App() {
             <>
               {/* Navigation Buttons */}
               <NavigationButtons />
-              
+
               {/* Calendar View */}
               <section id="calendar" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Calendar View</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Calendar View
+                </h2>
                 <BigCalendar transactions={transactions} />
               </section>
-              
+
               {/* Net Worth Timeline */}
               <section id="netWorthTimeline" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Net Worth Timeline</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Net Worth Timeline
+                </h2>
                 <NetWorthTimeline transactions={transactions} />
               </section>
 
               {/* Expense Forecast */}
               <section id="expenseForecast" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Expense Forecast</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Expense Forecast
+                </h2>
                 <ExpenseForecast transactions={transactions} />
               </section>
 
               {/* Monthly Calendar */}
               <section id="monthlyCalendar" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Monthly Spending Calendar</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Monthly Spending Calendar
+                </h2>
                 <MonthlySpendingCalendar transactions={transactions} />
               </section>
-              
+
               {/* Weekly Trends */}
               <section id="weeklyTrends" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Weekly Spending Trends</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Weekly Spending Trends
+                </h2>
                 <WeeklySpendingTrends transactions={transactions} />
               </section>
 
               {/* Cash Flow Waterfall */}
               <section id="cashflowWaterfall" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Cash Flow Waterfall</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Cash Flow Waterfall
+                </h2>
                 <CashFlowWaterfall transactions={transactions} />
               </section>
-              
+
               {/* Recurring Transactions */}
               <section id="recurringTransactions" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Recurring Transactions Analysis</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Recurring Transactions Analysis
+                </h2>
                 <RecurringTransactionsAnalysis transactions={transactions} />
               </section>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Budget Indicator */}
                 <section id="budgetIndicator" className="pt-4 mt-2">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4">Budget Indicator</h2>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">
+                    Budget Indicator
+                  </h2>
                   <BudgetIndicator
                     transactions={transactions}
                     budgetLimit={budgetLimit}
                     onBudgetChange={handleBudgetChange}
                   />
                 </section>
-                
+
                 {/* Spending Breakdown */}
                 <section id="spendingBreakdown" className="pt-4 mt-2">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4">Spending Breakdown</h2>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">
+                    Spending Breakdown
+                  </h2>
                   <SpendingBreakdown transactions={transactions} />
                 </section>
               </div>
-              
+
               {/* Expense Analysis */}
               <section id="expenseAnalysis" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Expense Analysis</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Expense Analysis
+                </h2>
                 <ExpenseAnalysis transactions={transactions} />
               </section>
-              
+
               {/* Savings Goal Tracker */}
               <section id="savingGoalTracker" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Savings Goal Tracker</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Savings Goal Tracker
+                </h2>
                 <SavingsGoalTracker transactions={transactions} />
               </section>
-              
+
               {/* Financial Health Score */}
               <section id="FinancialHealthScore" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Financial Health Score</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Financial Health Score
+                </h2>
                 <FinancialHealthScore transactions={transactions} />
               </section>
 
               {/* Bill Reminders */}
               <section id="BillReminders" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Bill Reminders</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Bill Reminders
+                </h2>
                 <BillReminders transactions={transactions} />
               </section>
-              
+
+              {/* Investment Portfolio Tracker */}
+              <section id="InvestmentPortfolioTracker" className="pt-4 mt-2">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                InvestmentPortfolioTracker
+                </h2>
+                <InvestmentPortfolioTracker transactions={transactions} />
+              </section>
+
+              {/* Investment Portfolio Tracker */}
+              <section id="ExpenseToIncomeRatioTracker" className="pt-4 mt-2">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                ExpenseToIncomeRatioTracker
+                </h2>
+                <ExpenseToIncomeRatioTracker transactions={transactions} />
+              </section>
+
+              <section id="DiscretionarySpendingAnalysis" className="pt-4 mt-2">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Essential vs Discretionary Spending
+                </h2>
+                <DiscretionarySpendingAnalysis transactions={transactions} />
+              </section>
+
+                  {/* <section id="savingsOpportunities" className="pt-4 mt-2">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">
+                      Savings Opportunities
+                    </h2>
+                    <SavingsOpportunityFinder transactions={transactions} />  
+                  </section> */}
+
               {/* Financial Chart */}
               <section id="financialChart" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Financial Chart</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Financial Chart
+                </h2>
                 <FinancialChart transactions={transactions} />
               </section>
-              
+
               {/* Transaction List */}
               <section id="transactionList" className="pt-4 mt-2">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Transaction List</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  Transaction List
+                </h2>
                 <TransactionList
                   transactions={transactions}
                   onDelete={handleDeleteTransaction}

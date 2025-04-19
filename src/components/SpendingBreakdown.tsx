@@ -37,7 +37,7 @@ export function SpendingBreakdown({ transactions }: SpendingBreakdownProps) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <h2 className="text-lg font-medium text-gray-900 mb-4">Spending by Category</h2>
-      <div className="h-[300px]">
+      <div className="h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -46,7 +46,7 @@ export function SpendingBreakdown({ transactions }: SpendingBreakdownProps) {
               cy="50%"
               labelLine={false}
               label={({ percent, payload }) => `${payload.category} (${(percent * 100).toFixed(0)}%)`}
-              outerRadius={80}
+              outerRadius={200}
               fill="#8884d8"
               dataKey="amount"
             >

@@ -17,6 +17,10 @@ const NavigationButtons = () => {
     { id: "savingGoalTracker", name: "Savings Goal Tracker" },
     { id: "FinancialHealthScore", name: "Financial Health Score" },
     { id: "BillReminders", name: "Bill Reminders" },
+    { id: "InvestmentPortfolioTracker", name: "Investment Portfolio Tracker" },
+    { id: "ExpenseToIncomeRatioTracker", name: "Expense To Income Ratio Tracker" },
+    { id: "DiscretionarySpendingAnalysis", name: "Discretionary Spending Analysis" },
+    // { id: "SavingsOpportunityFinder", name: "Savings Opportunity Finder" },
     { id: "financialChart", name: "Financial Chart" },
     { id: "transactionList", name: "Transaction List" },
   ];
