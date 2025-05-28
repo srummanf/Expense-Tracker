@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Download, 
-  Wallet, 
-  LayoutDashboard, 
-  Calendar, 
-  PieChart, 
-  BarChart2, 
+import {
+  Download,
+  Wallet,
+  LayoutDashboard,
+  Calendar,
+  PieChart,
+  BarChart2,
   TrendingUp,
   List,
   Target,
@@ -17,7 +17,8 @@ import {
   Bell,
   ArrowDownToLine,
   Menu,
-  X
+  X,
+  BadgeDollarSign,
 } from "lucide-react";
 import { TransactionForm } from "./components/TransactionForm";
 import { TransactionList } from "./components/TransactionList";
@@ -40,12 +41,15 @@ import { BillReminders } from "./components/BillReminders";
 import { InvestmentPortfolioTracker } from "./components/InvestmentPortfolioTracker";
 import { ExpenseToIncomeRatioTracker } from "./components/ExpenseToIncomeRatioTracker";
 import { DiscretionarySpendingAnalysis } from "./components/DiscretionarySpendingAnalysis";
+import BudgetOverview from "./components/BudgetOverview";
+import CategoryForm from './components/CategoryForm';
 
 // Navigation items configuration
 const navigationItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "calendar", label: "Calendar", icon: Calendar },
   { id: "netWorth", label: "Net Worth", icon: TrendingUp },
+  { id: "budgetOverview", label: "Budget Overview", icon: BadgeDollarSign },
   { id: "forecast", label: "Forecast", icon: BarChart2 },
   { id: "weeklyTrends", label: "Weekly Trends", icon: PieChart },
   { id: "cashFlow", label: "Cash Flow", icon: ArrowDownToLine },
@@ -92,10 +96,10 @@ function App() {
         setIsSidebarOpen(false);
       }
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -206,6 +210,44 @@ function App() {
 
   const balance = totalRevenue - totalExpenses;
 
+  //   const sampleData = {
+  //   bankAmount: balance,
+  //   bankLimit: 5000,
+  //   expenses: [
+  //     { category: "Food & Dining", planned: 8000, actual: 9500 },
+  //     { category: "Transportation", planned: 3000, actual: 2800 },
+  //     { category: "Entertainment", planned: 4000, actual: 5200 },
+  //     { category: "Shopping", planned: 6000 },
+  //     { category: "Utilities", planned: 2500, actual: 2400 },
+  //   ],
+  // };
+
+  // Sample integration with your TransactionForm data
+  const categories = [
+    "Food & Dining",
+    "Transportation",
+    "Entertainment",
+    "Shopping",
+    "Utilities",
+    "Healthcare",
+    "Travel",
+  ];
+
+  const transactionss = [
+    { category: "Food & Dining", amount: 1200, type: "expense" },
+    { category: "Transportation", amount: 450, type: "expense" },
+    { category: "Entertainment", amount: 800, type: "expense" },
+    // ... more transactions from your TransactionForm
+  ];
+
+  const initialPlannedAmounts = {
+    "Food & Dining": 8000,
+    Transportation: 3000,
+    Entertainment: 4000,
+    Shopping: 6000,
+    Utilities: 2500,
+  };
+
   const handleBudgetChange = (amount: number) => {
     setBudgetLimit((prev) => ({ ...prev, amount }));
   };
@@ -221,21 +263,31 @@ function App() {
             exit={{ opacity: 0, y: -20 }}
             className="space-y-6"
           >
-            <TransactionForm 
+            <TransactionForm
               onSubmit={handleAddTransaction}
               onImportCSV={handleImportCSV}
             />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <BudgetIndicator
-                transactions={transactions}
-                budgetLimit={budgetLimit}
-                onBudgetChange={handleBudgetChange}
-              />
-              <SpendingBreakdown transactions={transactions} />
-            </div>
 
-            <FinancialChart transactions={transactions} />
+            {transactions.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <BudgetIndicator
+                    transactions={transactions}
+                    budgetLimit={budgetLimit}
+                    onBudgetChange={handleBudgetChange}
+                  />
+                  <SpendingBreakdown transactions={transactions} />
+                </div>
+                <FinancialChart transactions={transactions} />
+              </>
+            ) : (
+              <div className="text-center text-gray-500 mt-10">
+                <p className="text-lg font-medium">No transactions yet</p>
+                <p className="text-sm">
+                  Start by adding a transaction or importing a CSV.
+                </p>
+              </div>
+            )}
           </motion.div>
         );
       case "calendar":
@@ -248,6 +300,31 @@ function App() {
             <BigCalendar transactions={transactions} />
           </motion.div>
         );
+      case "budgetOverview":
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <BudgetOverview
+              bankAmount={balance}
+              bankLimit={5000}
+              categories={categories} // From TransactionForm
+              transactions={transactions} // Your actual transaction data
+              initialPlannedAmounts={initialPlannedAmounts}
+              onPlannedAmountChange={(category, amount) => {
+                console.log(`Planned amount for ${category}: ₹${amount}`);
+                // Update your state/backend
+              }}
+              onBankLimitChange={(limit) => {
+                console.log(`New bank limit: ₹${limit}`);
+                // Update your state/backend
+              }}
+            />
+          </motion.div>
+        );
+
       case "netWorth":
         return (
           <motion.div
@@ -426,17 +503,19 @@ function App() {
       {/* Sidebar */}
       <motion.aside
         initial={{ x: -300 }}
-        animate={{ x: isSidebarOpen ? 0 : (isMobile ? -300 : -240) }}
+        animate={{ x: isSidebarOpen ? 0 : isMobile ? -300 : -240 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className={`fixed h-full bg-white border-r border-gray-200 z-30 ${
-          isSidebarOpen ? "w-64" : (isMobile ? "w-0" : "w-20")
+          isSidebarOpen ? "w-64" : isMobile ? "w-0" : "w-20"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo Section */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
             {isSidebarOpen && (
-              <h1 className="text-xl font-bold text-gray-900">Finance Tracker</h1>
+              <h1 className="text-xl font-bold text-gray-900">
+                Finance Tracker
+              </h1>
             )}
             {/* <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -445,7 +524,7 @@ function App() {
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button> */}
           </div>
-          
+
           {/* Navigation Items */}
           <nav className="flex-1 overflow-y-auto py-4 px-2">
             {navigationItems.map((item) => {
@@ -478,16 +557,24 @@ function App() {
 
       {/* Mobile sidebar overlay */}
       {isMobile && isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-20"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${
-        isSidebarOpen ? (isMobile ? "ml-0" : "ml-64") : (isMobile ? "ml-0" : "ml-20")
-      }`}>
+      <div
+        className={`flex-1 transition-all duration-300 ${
+          isSidebarOpen
+            ? isMobile
+              ? "ml-0"
+              : "ml-64"
+            : isMobile
+            ? "ml-0"
+            : "ml-20"
+        }`}
+      >
         <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between h-16 px-6">
             <div className="flex items-center">
@@ -500,18 +587,24 @@ function App() {
                 </button>
               )}
               <h1 className="text-xl font-semibold text-gray-900">
-                {navigationItems.find(item => item.id === activeView)?.label}
+                {navigationItems.find((item) => item.id === activeView)?.label}
               </h1>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="hidden md:flex items-center space-x-4">
                 <div className="text-sm">
                   <p className="text-gray-600">
-                    Revenue: <span className="text-green-600 font-medium">${totalRevenue.toFixed(2)}</span>
+                    Revenue:{" "}
+                    <span className="text-green-600 font-medium">
+                      ${totalRevenue.toFixed(2)}
+                    </span>
                   </p>
                   <p className="text-gray-600">
-                    Expenses: <span className="text-red-600 font-medium">${totalExpenses.toFixed(2)}</span>
+                    Expenses:{" "}
+                    <span className="text-red-600 font-medium">
+                      ${totalExpenses.toFixed(2)}
+                    </span>
                   </p>
                 </div>
                 <motion.div
@@ -554,8 +647,13 @@ function App() {
                 exit={{ opacity: 0, y: -20 }}
                 className="text-center py-12"
               >
+                <TransactionForm
+              onSubmit={handleAddTransaction}
+              onImportCSV={handleImportCSV}
+            />
                 <p className="text-gray-500">
-                  No transactions yet. Add your first transaction to get started!
+                  No transactions yet. Add your first transaction to get
+                  started!
                 </p>
                 <button
                   onClick={() => setActiveView("dashboard")}

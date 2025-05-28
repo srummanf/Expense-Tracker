@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.10",
     "@radix-ui/react-popover": "^1.1.7",
     "@radix-ui/react-progress": "^1.1.4",
     "@radix-ui/react-scroll-area": "^1.2.5",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tabs": "^1.1.8",
     "@tensorflow/tfjs": "^4.17.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -25,7 +27,8 @@
     "react-dom": "^18.3.1",
     "react-scroll": "^1.9.3",
     "recharts": "^2.12.2",
-    "tailwind-merge": "^2.2.1"
+    "tailwind-merge": "^2.2.1",
+    "vaul": "^1.1.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

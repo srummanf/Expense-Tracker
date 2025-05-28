@@ -8,7 +8,7 @@ interface TransactionFormProps {
   onImportCSV: (file: File) => void;
 }
 
-const CATEGORIES = [
+const DEFAULT_CATEGORIES = [
   'Food & Dining',
   'Transportation',
   'Housing',
@@ -31,6 +31,8 @@ export function TransactionForm({ onSubmit, onImportCSV }: TransactionFormProps)
     category: 'Other'
   });
 
+  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
+  const [newCategory, setNewCategory] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,6 +54,14 @@ export function TransactionForm({ onSubmit, onImportCSV }: TransactionFormProps)
     }
   };
 
+  const handleAddCategory = () => {
+    const trimmed = newCategory.trim();
+    if (trimmed && !categories.includes(trimmed)) {
+      setCategories([...categories, trimmed]);
+      setNewCategory('');
+    }
+  };
+
   return (
     <motion.form
       initial={{ opacity: 0, y: 20 }}
@@ -61,10 +71,9 @@ export function TransactionForm({ onSubmit, onImportCSV }: TransactionFormProps)
     >
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {/* Type, Amount, Date, Category, Reason Inputs (unchanged) */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
             <select
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value as 'expense' | 'revenue' })}
@@ -75,9 +84,7 @@ export function TransactionForm({ onSubmit, onImportCSV }: TransactionFormProps)
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
             <input
               type="number"
               step="0.01"
@@ -89,9 +96,7 @@ export function TransactionForm({ onSubmit, onImportCSV }: TransactionFormProps)
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
             <input
               type="date"
               required
@@ -101,23 +106,19 @@ export function TransactionForm({ onSubmit, onImportCSV }: TransactionFormProps)
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Category
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {CATEGORIES.map(category => (
+              {categories.map(category => (
                 <option key={category} value={category}>{category}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Reason
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
             <input
               type="text"
               required
@@ -128,12 +129,32 @@ export function TransactionForm({ onSubmit, onImportCSV }: TransactionFormProps)
             />
           </div>
         </div>
+
+        {/* Add Category Input */}
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder="Add new category"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="button"
+            onClick={handleAddCategory}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Add
+          </button>
+        </div>
+
+        {/* Submit and Import Buttons */}
         <div className="flex gap-4">
           <button
             type="submit"
             className={`flex-1 flex items-center justify-center space-x-2 ${
-              formData.type === 'revenue' 
-                ? 'bg-green-600 hover:bg-green-700' 
+              formData.type === 'revenue'
+                ? 'bg-green-600 hover:bg-green-700'
                 : 'bg-red-600 hover:bg-red-700'
             } text-white px-4 py-2 rounded-md transition-colors`}
           >
