@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { format, addMonths, isSameMonth } from 'date-fns';
 import type { Transaction } from '../types';
-import { ArrowUpRight, ArrowDownRight, Calendar, RepeatIcon } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Calendar, RepeatIcon, Info } from 'lucide-react';
 
 interface RecurringTransactionsAnalysisProps {
   transactions: Transaction[];
@@ -198,8 +198,18 @@ export function RecurringTransactionsAnalysis({ transactions }: RecurringTransac
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-lg font-medium text-gray-900 mb-4">Recurring Transactions Analysis</h2>
-      
+      <h2 className="text-lg font-medium text-gray-900 mb-4"></h2>
+      <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+          <h2 className="whitespace-normal break-words">Recurring Transactions Analysis</h2>
+          <div className="group relative">
+            <Info size={16} className="text-gray-400 cursor-help" />
+            <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+              <p className="mb-1">
+                This analysis is based on your recurring transactions. It provides a summary of your expected expenses and revenu
+              </p>
+            </div>
+          </div>
+        </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-blue-50 p-4 rounded-lg">
           <p className="text-blue-600 text-sm font-medium mb-1">Next Month Forecast</p>

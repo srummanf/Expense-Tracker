@@ -50,6 +50,7 @@ import {
   Calendar,
   ArrowUp,
   ArrowDown,
+  Info,
 } from "lucide-react";
 
 const COLORS = [
@@ -717,7 +718,18 @@ export function ExpenseAnalysis({ transactions }: ExpenseAnalysisProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
         {/* Weekly Spending */}
         <div className="bg-white p-4 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">Weekly Spending</h3>
+          <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+            <h2 className="whitespace-normal break-words">Weekly Spending</h2>
+            <div className="group relative">
+              <Info size={16} className="text-gray-400 cursor-help" />
+              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+                <p className="mb-1">
+                  This chart shows your expenses and revenue over the last four
+                  weeks. Hover over each bar to see the details for that week.
+                </p>
+              </div>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={getWeeklyData()}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -733,7 +745,21 @@ export function ExpenseAnalysis({ transactions }: ExpenseAnalysisProps) {
 
         {/* Monthly Comparison */}
         <div className="bg-white p-4 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">Monthly Comparison</h3>
+          <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+            <h2 className="whitespace-normal break-words">
+              Monthly Comparison
+            </h2>
+            <div className="group relative">
+              <Info size={16} className="text-gray-400 cursor-help" />
+              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+                <p className="mb-1">
+                  This chart compares your expenses and revenue over the last
+                  six months. Hover over each bar to see the details for that
+                  month.
+                </p>
+              </div>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={getMonthlyData()}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -755,7 +781,22 @@ export function ExpenseAnalysis({ transactions }: ExpenseAnalysisProps) {
 
         {/* Category Breakdown */}
         <div className="bg-white p-4 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">Spending by Category</h3>
+          <h3 className="text-lg font-semibold mb-4"></h3>
+          <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+            <h2 className="whitespace-normal break-words">
+              Spending by Category
+            </h2>
+            <div className="group relative">
+              <Info size={16} className="text-gray-400 cursor-help" />
+              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+                <p className="mb-1">
+                  This pie chart shows your spending distribution across different
+                  categories. Hover over each segment to see the
+                  total spending for that category.
+                </p>
+              </div>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -781,8 +822,23 @@ export function ExpenseAnalysis({ transactions }: ExpenseAnalysisProps) {
         {/* Daily Spending Pattern */}
         <div className="bg-white p-4 rounded-lg shadow-lg">
           <h3 className="text-lg font-semibold mb-4">
-            Daily Spending Pattern (Current/Previous week)
+            
           </h3>
+          <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+            <h2 className="whitespace-normal break-words">
+              Daily Spending Pattern (Current week)
+            </h2>
+            <div className="group relative">
+              <Info size={16} className="text-gray-400 cursor-help" />
+              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+                <p className="mb-1">
+                  This chart shows your daily spending pattern for the current
+                  week. Hover over each point to
+                  see the spending amount for that day.
+                </p>
+              </div>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={getDailyPatternData()}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -801,7 +857,24 @@ export function ExpenseAnalysis({ transactions }: ExpenseAnalysisProps) {
 
         {/* Daily Spending Pattern */}
         <div className="bg-white p-4 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">Cumultive Daily Spending Pattern</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            
+          </h3>
+          <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+            <h2 className="whitespace-normal break-words">
+              Cumultive Daily Spending Pattern
+            </h2>
+            <div className="group relative">
+              <Info size={16} className="text-gray-400 cursor-help" />
+              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+                <p className="mb-1">
+                  This chart shows the cumulative spending pattern for the
+                  current week, starting from the most recent Monday. Hover over
+                  each point to see the cumulative spending amount for that day.
+                </p>
+              </div>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={getCumulativeDailyPatternData()}>
               <CartesianGrid strokeDasharray="3 3" />
