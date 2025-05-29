@@ -48,25 +48,25 @@ import PlannedAmountsManager from "./components/PlannedAmountsManager";
 // Navigation items configuration
 const navigationItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "calendar", label: "Calendar", icon: Calendar },
-  { id: "netWorth", label: "Net Worth", icon: TrendingUp },
+  { id: "transactions", label: "All Transactions", icon: List },
+  { id: "calendar", label: "Transaction Calendar", icon: Calendar },
   { id: "plannedAmounts", label: "Budget Planning", icon: Settings },
   { id: "budgetOverview", label: "Budget Overview", icon: BadgeDollarSign },
-  { id: "forecast", label: "Forecast", icon: BarChart2 },
+  { id: "savings", label: "Saving Goals", icon: Target },
   { id: "weeklyTrends", label: "Weekly Trends", icon: PieChart },
   // { id: "cashFlow", label: "Cash Flow", icon: ArrowDownToLine },
   { id: "recurring", label: "Recurring", icon: Clock },
   // { id: "budget", label: "Budget", icon: Wallet },
-  { id: "spending", label: "Spending", icon: PieChart },
-  { id: "analysis", label: "Analysis", icon: BarChart2 },
-  { id: "savings", label: "Savings Goals", icon: Target },
+  // { id: "spending", label: "Spending", icon: PieChart },
+  { id: "analysis", label: "Graphical Analysis", icon: BarChart2 },
   { id: "health", label: "Financial Health", icon: Shield },
   { id: "reminders", label: "Bill Reminders", icon: Bell },
   // { id: "investments", label: "Investments", icon: Briefcase },
   { id: "ratios", label: "Expense Ratio", icon: PieChart },
-  { id: "discretionary", label: "Discretionary", icon: PiggyBank },
+  { id: "discretionary", label: "Discretionary Analysis", icon: PiggyBank },
   // { id: "chart", label: "Charts", icon: BarChart2 },
-  { id: "transactions", label: "All Transactions", icon: List },
+  { id: "netWorth", label: "Net Worth", icon: TrendingUp },
+  { id: "forecast", label: "Forecast", icon: BarChart2 },
 ];
 
 function App() {
@@ -395,6 +395,7 @@ function App() {
             exit={{ opacity: 0, y: -20 }}
           >
             <WeeklySpendingTrends transactions={transactions} />
+            
           </motion.div>
         );
       case "cashFlow":

@@ -13,6 +13,7 @@ import {
   X,
   BadgeDollarSign,
 } from "lucide-react";
+import { SavingsGoalTracker } from "./SavingsGoalTracker";
 
 // Import Transaction type
 interface Transaction {
@@ -70,6 +71,7 @@ export default function FinancialExpenseTracker({
   const [viewMode, setViewMode] = useState<"planned" | "actual">("actual");
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>("");
+  const [showSavingsGoals, setShowSavingsGoals] = useState(false);
 
   // Update internal state when props change
   useEffect(() => {
@@ -122,7 +124,7 @@ export default function FinancialExpenseTracker({
 
   // Effective bank amount (including revenue)
   const effectiveBankAmount = bankAmount;
-  const safeBalance = effectiveBankAmount - totalPlanned - currentBankLimit;
+  // const safeBalance = effectiveBankAmount - totalPlanned - currentBankLimit;
   const usableBalance =
     effectiveBankAmount - totalActualSpent - currentBankLimit;
 
@@ -218,6 +220,38 @@ export default function FinancialExpenseTracker({
 
   const spendingTrend = getSpendingTrend();
 
+  // Calculate total pending savings contributions (amounts entered but not yet contributed)
+  const totalSavingsContributions = (() => {
+    try {
+      const savedContributions = localStorage.getItem("savingsGoals");
+      console.log("Saved contributions:", savedContributions);
+
+      if (savedContributions) {
+        const contributions = JSON.parse(savedContributions);
+
+        if (Array.isArray(contributions)) {
+          return contributions.reduce(
+            (total: number, contribution: any) =>
+              total + (Number(contribution.currentAmount) || 0),
+            0
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error reading pending savings contributions:", error);
+    }
+
+    return 0;
+  })();
+
+  // Effective bank amount (including revenue)
+
+  const safeBalance =
+    effectiveBankAmount -
+    totalPlanned -
+    currentBankLimit -
+    totalSavingsContributions;
+
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Bank Summary Card */}
@@ -227,22 +261,26 @@ export default function FinancialExpenseTracker({
             <BadgeDollarSign className="text-blue-600" />
             Financial Overview
           </h2>
-          <div
-            className={`px-3 py-1 rounded-full text-sm font-semibold ${statusInfo.color}`}
-          >
-            {statusInfo.text}
+          <div className="flex items-center gap-3">
+            {/* <button
+              onClick={() => setShowSavingsGoals(!showSavingsGoals)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                showSavingsGoals
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-blue-600 border border-blue-200"
+              }`}
+            >
+              {showSavingsGoals ? "Hide" : "Show"} Savings Goals
+            </button> */}
+            <div
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${statusInfo.color}`}
+            >
+              {statusInfo.text}
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {/* <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="text-sm text-gray-600">Initial Bank</div>
-            <div className="text-xl font-bold text-gray-900">₹{bankAmount.toLocaleString()}</div>
-          </div> */}
-          {/* <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="text-sm text-gray-600">Revenue Added</div>
-            <div className="text-xl font-bold text-green-600">+₹{totalRevenue.toLocaleString()}</div>
-          </div> */}
           <div className="bg-white p-4 rounded-lg shadow-sm">
             <div className="text-sm text-gray-600">Bank Limit</div>
             <div className="flex items-center gap-2">
@@ -385,6 +423,13 @@ export default function FinancialExpenseTracker({
           </div>
         )}
       </div>
+
+      {/* Savings Goals Section - Conditionally Rendered */}
+      {showSavingsGoals && (
+        <div className="animate-in slide-in-from-top duration-300">
+          <SavingsGoalTracker transactions={transactions} />
+        </div>
+      )}
 
       {/* Alerts & Warnings */}
       {(usableBalance < 0 || safeBalance < 0) && (
