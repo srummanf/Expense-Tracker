@@ -19,6 +19,7 @@ import {
   Menu,
   X,
   BadgeDollarSign,
+  Settings,
 } from "lucide-react";
 import { TransactionForm } from "./components/TransactionForm";
 import { TransactionList } from "./components/TransactionList";
@@ -42,13 +43,14 @@ import { InvestmentPortfolioTracker } from "./components/InvestmentPortfolioTrac
 import { ExpenseToIncomeRatioTracker } from "./components/ExpenseToIncomeRatioTracker";
 import { DiscretionarySpendingAnalysis } from "./components/DiscretionarySpendingAnalysis";
 import BudgetOverview from "./components/BudgetOverview";
-import CategoryForm from './components/CategoryForm';
+import PlannedAmountsManager from "./components/PlannedAmountsManager";
 
 // Navigation items configuration
 const navigationItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "calendar", label: "Calendar", icon: Calendar },
   { id: "netWorth", label: "Net Worth", icon: TrendingUp },
+  { id: "plannedAmounts", label: "Budget Planning", icon: Settings },
   { id: "budgetOverview", label: "Budget Overview", icon: BadgeDollarSign },
   { id: "forecast", label: "Forecast", icon: BarChart2 },
   { id: "weeklyTrends", label: "Weekly Trends", icon: PieChart },
@@ -82,6 +84,22 @@ function App() {
           period: "monthly",
         };
   });
+
+  // Load planned amounts from localStorage
+  const [plannedAmounts, setPlannedAmounts] = useState<Record<string, number>>(
+    () => {
+      const saved = localStorage.getItem("plannedAmounts");
+      return saved
+        ? JSON.parse(saved)
+        : {
+            "Food & Dining": 8000,
+            Transportation: 3000,
+            Entertainment: 4000,
+            Shopping: 6000,
+            Utilities: 2500,
+          };
+    }
+  );
 
   // State for sidebar navigation
   const [activeView, setActiveView] = useState("dashboard");
@@ -233,6 +251,8 @@ function App() {
     "Travel",
   ];
 
+  
+
   const transactionss = [
     { category: "Food & Dining", amount: 1200, type: "expense" },
     { category: "Transportation", amount: 450, type: "expense" },
@@ -250,6 +270,11 @@ function App() {
 
   const handleBudgetChange = (amount: number) => {
     setBudgetLimit((prev) => ({ ...prev, amount }));
+  };
+
+  // Handler for planned amounts changes
+  const handlePlannedAmountsChange = (amounts: Record<string, number>) => {
+    setPlannedAmounts(amounts);
   };
 
   // Content rendering based on active view
@@ -300,6 +325,20 @@ function App() {
             <BigCalendar transactions={transactions} />
           </motion.div>
         );
+        case "plannedAmounts":
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <PlannedAmountsManager
+              categories={categories}
+              initialPlannedAmounts={plannedAmounts}
+              onPlannedAmountsChange={handlePlannedAmountsChange}
+            />
+          </motion.div>
+        );
       case "budgetOverview":
         return (
           <motion.div
@@ -312,7 +351,7 @@ function App() {
               bankLimit={5000}
               categories={categories} // From TransactionForm
               transactions={transactions} // Your actual transaction data
-              initialPlannedAmounts={initialPlannedAmounts}
+              initialPlannedAmounts={plannedAmounts}
               onPlannedAmountChange={(category, amount) => {
                 console.log(`Planned amount for ${category}: ₹${amount}`);
                 // Update your state/backend
@@ -648,9 +687,9 @@ function App() {
                 className="text-center py-12"
               >
                 <TransactionForm
-              onSubmit={handleAddTransaction}
-              onImportCSV={handleImportCSV}
-            />
+                  onSubmit={handleAddTransaction}
+                  onImportCSV={handleImportCSV}
+                />
                 <p className="text-gray-500">
                   No transactions yet. Add your first transaction to get
                   started!

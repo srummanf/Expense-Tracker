@@ -84,8 +84,15 @@ export default function FinancialExpenseTracker({
     .filter(t => t.type === 'revenue')
     .reduce((sum, transaction) => sum + transaction.amount, 0);
 
-  // Create expenses array from categories
-  const expenses: ExpenseCategory[] = categories.map(category => ({
+  // FIXED: Create expenses array from ALL categories (original + custom)
+  // Combine categories from props and plannedAmounts to include custom categories
+  const allCategories = Array.from(new Set([
+    ...categories, // Original categories
+    ...Object.keys(plannedAmounts), // Custom categories from planned amounts
+    ...Object.keys(actualSpendingPerCategory) // Categories that have actual spending
+  ]));
+
+  const expenses: ExpenseCategory[] = allCategories.map(category => ({
     category,
     planned: plannedAmounts[category] || 0,
     actual: actualSpendingPerCategory[category] || 0
