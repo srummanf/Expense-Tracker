@@ -62,11 +62,11 @@ const navigationItems = [
   { id: "savings", label: "Savings Goals", icon: Target },
   { id: "health", label: "Financial Health", icon: Shield },
   { id: "reminders", label: "Bill Reminders", icon: Bell },
-  { id: "investments", label: "Investments", icon: Briefcase },
+  // { id: "investments", label: "Investments", icon: Briefcase },
   { id: "ratios", label: "Expense Ratio", icon: PieChart },
   { id: "discretionary", label: "Discretionary", icon: PiggyBank },
-  { id: "chart", label: "Charts", icon: BarChart2 },
-  { id: "transactions", label: "Transactions", icon: List },
+  // { id: "chart", label: "Charts", icon: BarChart2 },
+  { id: "transactions", label: "All Transactions", icon: List },
 ];
 
 function App() {
@@ -245,6 +245,7 @@ function App() {
     "Food & Dining",
     "Transportation",
     "Entertainment",
+    "Groceries",
     "Shopping",
     "Utilities",
     "Healthcare",
@@ -293,6 +294,7 @@ function App() {
 
             {transactions.length > 0 ? (
               <>
+                <FinancialChart transactions={transactions} />
                 <div className="grid grid-cols-3 gap-6">
                   <div className="col-span-1">
                     <BudgetIndicator
@@ -305,8 +307,6 @@ function App() {
                     <SpendingBreakdown transactions={transactions} />
                   </div>
                 </div>
-
-                <FinancialChart transactions={transactions} />
               </>
             ) : (
               <div className="text-center text-gray-500 mt-10">
@@ -353,7 +353,7 @@ function App() {
               bankAmount={balance}
               bankLimit={5000}
               categories={categories}
-              transactions={transactions} 
+              transactions={transactions}
               initialPlannedAmounts={plannedAmounts}
               onPlannedAmountChange={(category, amount) => {
                 console.log(`Planned amount for ${category}: ₹${amount}`);

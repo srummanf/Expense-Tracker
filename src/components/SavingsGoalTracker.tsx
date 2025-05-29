@@ -129,7 +129,7 @@ export const SavingsGoalTracker = ({
 
               <div className="flex justify-between mt-2 text-sm text-gray-600">
                 <span>
-                  ${goal.currentAmount.toFixed(2)} of $
+                  ₹{goal.currentAmount.toFixed(2)} of ₹
                   {goal.targetAmount.toFixed(2)}
                 </span>
                 <span>{daysLeft} days left</span>

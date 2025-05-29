@@ -11,11 +11,14 @@ const DEFAULT_CATEGORIES = [
   "Housing",
   "Utilities",
   "Healthcare",
+  "Groceries",
   "Entertainment",
   "Shopping",
   "Travel",
   "Education",
   "Amount Received",
+  "Insurance",
+  "Personal Care",
   "Other",
 ];
 

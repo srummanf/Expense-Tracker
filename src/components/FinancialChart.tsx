@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 import type { Transaction } from '../types';
+import { Info } from 'lucide-react';
 
 interface FinancialChartProps {
   transactions: Transaction[];
@@ -39,7 +40,22 @@ export function FinancialChart({ transactions }: FinancialChartProps) {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-lg font-medium text-gray-900 mb-4">Financial Overview</h2>
+      
+      <div className="flex flex-wrap items-center gap-2 text-lg font-medium text-gray-900">
+          <h2 className="whitespace-normal break-words">Financial Overview</h2>
+          <div className="group relative">
+            <Info size={16} className="text-gray-400 cursor-help" />
+            <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 md:w-96 shadow-lg">
+              <p className="mb-1">
+                This chart visualizes your financial transactions over time, showing revenue,
+                expenses, and balance changes.
+              </p>
+              <p>
+                <strong>Revenue</strong> is shown in green, <strong>Expenses</strong> in red, and <strong>Balance</strong> in blue.
+              </p>
+            </div>
+          </div>
+        </div>
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
