@@ -54,7 +54,7 @@ const navigationItems = [
   { id: "budgetOverview", label: "Budget Overview", icon: BadgeDollarSign },
   { id: "forecast", label: "Forecast", icon: BarChart2 },
   { id: "weeklyTrends", label: "Weekly Trends", icon: PieChart },
-  { id: "cashFlow", label: "Cash Flow", icon: ArrowDownToLine },
+  // { id: "cashFlow", label: "Cash Flow", icon: ArrowDownToLine },
   { id: "recurring", label: "Recurring", icon: Clock },
   { id: "budget", label: "Budget", icon: Wallet },
   { id: "spending", label: "Spending", icon: PieChart },
@@ -251,8 +251,6 @@ function App() {
     "Travel",
   ];
 
-  
-
   const transactionss = [
     { category: "Food & Dining", amount: 1200, type: "expense" },
     { category: "Transportation", amount: 450, type: "expense" },
@@ -295,14 +293,19 @@ function App() {
 
             {transactions.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <BudgetIndicator
-                    transactions={transactions}
-                    budgetLimit={budgetLimit}
-                    onBudgetChange={handleBudgetChange}
-                  />
-                  <SpendingBreakdown transactions={transactions} />
+                <div className="grid grid-cols-3 gap-6">
+                  <div className="col-span-1">
+                    <BudgetIndicator
+                      transactions={transactions}
+                      budgetLimit={budgetLimit}
+                      onBudgetChange={handleBudgetChange}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <SpendingBreakdown transactions={transactions} />
+                  </div>
                 </div>
+
                 <FinancialChart transactions={transactions} />
               </>
             ) : (
@@ -325,7 +328,7 @@ function App() {
             <BigCalendar transactions={transactions} />
           </motion.div>
         );
-        case "plannedAmounts":
+      case "plannedAmounts":
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -349,8 +352,8 @@ function App() {
             <BudgetOverview
               bankAmount={balance}
               bankLimit={5000}
-              categories={categories} // From TransactionForm
-              transactions={transactions} // Your actual transaction data
+              categories={categories}
+              transactions={transactions} 
               initialPlannedAmounts={plannedAmounts}
               onPlannedAmountChange={(category, amount) => {
                 console.log(`Planned amount for ${category}: ₹${amount}`);
@@ -636,13 +639,13 @@ function App() {
                   <p className="text-gray-600">
                     Revenue:{" "}
                     <span className="text-green-600 font-medium">
-                      ${totalRevenue.toFixed(2)}
+                      ₹{totalRevenue.toFixed(2)}
                     </span>
                   </p>
                   <p className="text-gray-600">
                     Expenses:{" "}
                     <span className="text-red-600 font-medium">
-                      ${totalExpenses.toFixed(2)}
+                      ₹{totalExpenses.toFixed(2)}
                     </span>
                   </p>
                 </div>
@@ -659,7 +662,7 @@ function App() {
                   <Wallet size={20} />
                   <div>
                     <p className="text-xs font-medium">Balance</p>
-                    <p className="text-sm font-bold">${balance.toFixed(2)}</p>
+                    <p className="text-sm font-bold">₹{balance.toFixed(2)}</p>
                   </div>
                 </motion.div>
               </div>

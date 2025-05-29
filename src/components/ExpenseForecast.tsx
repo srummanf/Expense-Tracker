@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { format, addMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO, subMonths } from 'date-fns';
-import { TrendingUp, TrendingDown, Calendar } from 'lucide-react';
+import { TrendingUp, TrendingDown, Calendar, Info } from 'lucide-react';
 import type { Transaction } from '../types';
 
 interface ExpenseForecastProps {
@@ -126,7 +126,21 @@ export function ExpenseForecast({ transactions, forecastMonths = 3 }: ExpenseFor
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-medium text-gray-900">Expense Forecast</h2>
+        <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+          <h2 className="whitespace-normal break-words">Expense Forecast</h2>
+          <div className="group relative">
+            <Info size={16} className="text-gray-400 cursor-help" />
+            <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+              <p className="mb-1">
+                This chart shows your projected expenses for the next few months based on your spending patterns.
+              </p>
+              {/* <p className="mb-1">
+                You can select different timeframes to view your financial
+                progress.
+              </p> */}
+            </div>
+          </div>
+        </div>
         <div className="flex items-center space-x-2">
           <button 
             className={`px-3 py-1 rounded text-sm ${viewMode === 'total' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}
@@ -151,7 +165,7 @@ export function ExpenseForecast({ transactions, forecastMonths = 3 }: ExpenseFor
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip 
-                formatter={(value: number) => [`$${value.toFixed(2)}`, '']}
+                formatter={(value: number) => [`₹ ${value.toFixed(2)}`, '']}
                 labelFormatter={(label) => `Month: ${label}`}
               />
               <Legend />
@@ -163,7 +177,7 @@ export function ExpenseForecast({ transactions, forecastMonths = 3 }: ExpenseFor
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip 
-                formatter={(value: number) => [`$${value.toFixed(2)}`, '']}
+                formatter={(value: number) => [`₹ ${value.toFixed(2)}`, '']}
                 labelFormatter={(label) => `Month: ${label}`}
               />
               <Legend />
@@ -213,7 +227,7 @@ export function ExpenseForecast({ transactions, forecastMonths = 3 }: ExpenseFor
                   </span>
                 </div>
               </div>
-              <p className="text-lg font-bold mt-1">${category.monthlyAverage.toFixed(2)}/month</p>
+              <p className="text-lg font-bold mt-1">₹ {category.monthlyAverage.toFixed(2)}/month</p>
             </div>
           ))}
         </div>
@@ -228,7 +242,7 @@ export function ExpenseForecast({ transactions, forecastMonths = 3 }: ExpenseFor
             <h3 className="text-md font-medium text-blue-700">Next Month's Forecast</h3>
             <p className="text-blue-600 mt-1">
               Based on your spending patterns, you're projected to spend{' '}
-              <span className="font-bold">${forecastData[0]?.totalForecast.toFixed(2)}</span> next month.
+              <span className="font-bold">₹ {forecastData[0]?.totalForecast.toFixed(2)}</span> next month.
             </p>
           </div>
         </div>

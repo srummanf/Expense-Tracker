@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, addWeeks, subWeeks } from 'date-fns';
-import { ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowUp, ArrowDown, Minus, Info } from 'lucide-react';
 import type { Transaction } from '../types';
 
 interface WeeklySpendingTrendsProps {
@@ -151,13 +151,28 @@ export function WeeklySpendingTrends({ transactions }: WeeklySpendingTrendsProps
   
   // Format currency
   const formatCurrency = (amount: number) => {
-    return `$${amount.toFixed(2)}`;
+    return `₹ ${amount.toFixed(2)}`;
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-medium text-gray-900">Weekly Spending Trends</h2>
+        <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+          <h2 className="whitespace-normal break-words">Weekly Spending Trends</h2>
+          <div className="group relative">
+            <Info size={16} className="text-gray-400 cursor-help" />
+            <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+              <p className="mb-1">
+                This chart shows your spending trends over the past week. You can
+                click on any day to view detailed transactions for that day.
+              </p>
+              {/* <p className="mb-1">
+                You can select different timeframes to view your financial
+                progress.
+              </p> */}
+            </div>
+          </div>
+        </div>
         <div className="flex items-center space-x-2">
           <button
             onClick={prevWeek}
@@ -187,7 +202,7 @@ export function WeeklySpendingTrends({ transactions }: WeeklySpendingTrendsProps
             />
             <YAxis 
               domain={[0, maxAmount * 1.1]}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => `₹${value}`}
             />
             <Tooltip 
               formatter={(value: number, name) => {
@@ -281,7 +296,7 @@ export function WeeklySpendingTrends({ transactions }: WeeklySpendingTrendsProps
                     <p className="text-xs text-gray-500">{transaction.category}</p>
                   </div>
                   <span className={transaction.type === 'expense' ? 'text-red-600' : 'text-green-600'}>
-                    {transaction.type === 'expense' ? '-' : '+'}${transaction.amount.toFixed(2)}
+                    {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount.toFixed(2)}
                   </span>
                 </div>
               ))}

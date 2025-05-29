@@ -204,16 +204,16 @@ export function RecurringTransactionsAnalysis({ transactions }: RecurringTransac
         <div className="bg-blue-50 p-4 rounded-lg">
           <p className="text-blue-600 text-sm font-medium mb-1">Next Month Forecast</p>
           <p className="text-2xl font-bold">
-            ${monthlySummary.balance.toFixed(2)}
+            ₹{monthlySummary.balance.toFixed(2)}
           </p>
           <div className="mt-2 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Income:</span>
-              <span className="text-green-600">${monthlySummary.expectedRevenue.toFixed(2)}</span>
+              <span className="text-green-600">₹{monthlySummary.expectedRevenue.toFixed(2)}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Expenses:</span>
-              <span className="text-red-600">${monthlySummary.expectedExpenses.toFixed(2)}</span>
+              <span className="text-red-600">₹{monthlySummary.expectedExpenses.toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -236,7 +236,7 @@ export function RecurringTransactionsAnalysis({ transactions }: RecurringTransac
         <div className="bg-purple-50 p-4 rounded-lg">
           <p className="text-purple-600 text-sm font-medium mb-1">Subscription Alert</p>
           <p className="text-2xl font-bold">
-            ${recurringItems
+            ₹{recurringItems
               .filter(item => item.type === 'expense' && item.category.toLowerCase().includes('subscription'))
               .reduce((sum, item) => sum + item.amount, 0).toFixed(2)}/mo
           </p>
@@ -284,7 +284,7 @@ export function RecurringTransactionsAnalysis({ transactions }: RecurringTransac
                   <div className={`text-sm font-medium ${
                     item.type === 'expense' ? 'text-red-600' : 'text-green-600'
                   }`}>
-                    {item.type === 'expense' ? '-' : '+'} ${item.amount.toFixed(2)}
+                    {item.type === 'expense' ? '-' : '+'} ₹{item.amount.toFixed(2)}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

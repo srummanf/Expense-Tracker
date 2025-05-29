@@ -1,15 +1,15 @@
-import React from 'react';
-import { AlertTriangle, CheckCircle } from 'lucide-react';
-import type { Transaction, BudgetLimit } from '../types';
-import { 
-  startOfDay, 
-  startOfWeek, 
-  startOfMonth, 
-  endOfDay, 
-  endOfWeek, 
+import React from "react";
+import { AlertTriangle, CheckCircle, Info } from "lucide-react";
+import type { Transaction, BudgetLimit } from "../types";
+import {
+  startOfDay,
+  startOfWeek,
+  startOfMonth,
+  endOfDay,
+  endOfWeek,
   endOfMonth,
-  isWithinInterval 
-} from 'date-fns';
+  isWithinInterval,
+} from "date-fns";
 
 interface BudgetIndicatorProps {
   transactions: Transaction[];
@@ -17,31 +17,36 @@ interface BudgetIndicatorProps {
   onBudgetChange: (amount: number) => void;
 }
 
-export function BudgetIndicator({ transactions, budgetLimit, onBudgetChange }: BudgetIndicatorProps) {
+export function BudgetIndicator({
+  transactions,
+  budgetLimit,
+  onBudgetChange,
+}: BudgetIndicatorProps) {
   const getCurrentPeriodExpenses = () => {
     const now = new Date();
     let start: Date;
     let end: Date;
 
     switch (budgetLimit.period) {
-      case 'daily':
+      case "daily":
         start = startOfDay(now);
         end = endOfDay(now);
         break;
-      case 'weekly':
+      case "weekly":
         start = startOfWeek(now);
         end = endOfWeek(now);
         break;
-      case 'monthly':
+      case "monthly":
         start = startOfMonth(now);
         end = endOfMonth(now);
         break;
     }
 
     return transactions
-      .filter(t => 
-        t.type === 'expense' && 
-        isWithinInterval(new Date(t.date), { start, end })
+      .filter(
+        (t) =>
+          t.type === "expense" &&
+          isWithinInterval(new Date(t.date), { start, end })
       )
       .reduce((sum, t) => sum + t.amount, 0);
   };
@@ -52,14 +57,28 @@ export function BudgetIndicator({ transactions, budgetLimit, onBudgetChange }: B
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-lg font-medium text-gray-900 mb-4">Budget Status</h2>
+      
+      {/* Info Component */}
+      <div className="flex items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+        <h2>Budget Status</h2>
+        <div className="group relative">
+          <Info size={14} className="text-gray-400 cursor-help" />
+          <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+            Shows your current spending against the set budget limit for the selected period.
+          </div>
+        </div>
+      </div>
+
+
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-gray-600">
-            {budgetLimit.period.charAt(0).toUpperCase() + budgetLimit.period.slice(1)} Budget:
+            {budgetLimit.period.charAt(0).toUpperCase() +
+              budgetLimit.period.slice(1)}{" "}
+            Budget:
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-gray-600">$</span>
+            <span className="text-gray-600">₹</span>
             <input
               type="number"
               value={budgetLimit.amount}
@@ -72,7 +91,7 @@ export function BudgetIndicator({ transactions, budgetLimit, onBudgetChange }: B
         </div>
         <div className="flex items-center justify-between">
           <span className="text-gray-600">Current Spending:</span>
-          <span className="font-medium">${currentExpenses.toFixed(2)}</span>
+          <span className="font-medium">₹{currentExpenses.toFixed(2)}</span>
         </div>
         <div className="relative pt-1">
           <div className="flex mb-2 items-center justify-between">
@@ -97,7 +116,7 @@ export function BudgetIndicator({ transactions, budgetLimit, onBudgetChange }: B
             <div
               style={{ width: `${Math.min(percentage, 100)}%` }}
               className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
-                isOverBudget ? 'bg-red-500' : 'bg-blue-500'
+                isOverBudget ? "bg-red-500" : "bg-blue-500"
               }`}
             />
           </div>

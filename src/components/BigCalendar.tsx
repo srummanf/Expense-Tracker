@@ -11,6 +11,7 @@ import {
   addDays,
 } from "date-fns";
 import type { Transaction } from "../types";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 
 interface BigCalendarProps {
   transactions: Transaction[];
@@ -83,26 +84,50 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium text-gray-900">
-          Transaction Calendar
-        </h2>
-        <div className="flex gap-2">
-          <button
-            onClick={prevMonth}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
-          >
-            &lt;
-          </button>
-          <div className="flex flex-col items-center justify-center">
-            <div className="font-medium">{monthHeader}</div>
+        <div className="flex flex-wrap items-center gap-2 mb-1 text-lg font-medium text-gray-900">
+          <h2 className="whitespace-normal break-words">
+            Transaction Calendar
+          </h2>
+          <div className="group relative">
+            <Info size={16} className="text-gray-400 cursor-help" />
+            <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-64 sm:w-72 md:w-96 shadow-lg">
+              This calendar shows your transactions for the current month. Click
+              on a day to see details.
+            </div>
           </div>
-          <button
-            onClick={nextMonth}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
-          >
-            &gt;
-          </button>
         </div>
+        {/* Months Toggle Button */}
+        <div className="flex items-center justify-center gap-1 bg-gray-50 rounded-xl p-1 border border-gray-200 shadow-sm">
+  <button
+    onClick={prevMonth}
+    className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed group"
+    title="Previous month"
+  >
+    <ChevronLeft 
+      size={16} 
+      className="transform group-hover:-translate-x-0.5 transition-transform duration-200"
+    />
+  </button>
+  
+  <div className="flex items-center justify-center min-w-[140px] px-4 py-2">
+    <div className="text-center">
+      <div className="font-semibold text-gray-900 text-lg leading-tight">
+        {monthHeader}
+      </div>
+    </div>
+  </div>
+  
+  <button
+    onClick={nextMonth}
+    className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed group"
+    title="Next month"
+  >
+    <ChevronRight 
+      size={16} 
+      className="transform group-hover:translate-x-0.5 transition-transform duration-200"
+    />
+  </button>
+</div>
       </div>
 
       {/* Calendar Header (Days of week) */}
@@ -147,7 +172,7 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
                           : "text-gray-800"
                       }`}
                     >
-                      ${expense.toFixed(0)}
+                      ₹{expense.toFixed(0)}
                     </div>
                   )}
                   {hasTx && (
@@ -182,7 +207,7 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
                               transaction.type === "expense" ? "red" : "green"
                             }-600`}
                           >
-                            {transaction.type === "expense" ? "-" : "+"} $
+                            {transaction.type === "expense" ? "-" : "+"} ₹
                             {transaction.amount.toFixed(2)}
                           </div>
                           <div className="text-xs text-gray-500">
