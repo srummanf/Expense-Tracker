@@ -244,12 +244,18 @@ function App() {
   const categories = [
     "Food & Dining",
     "Transportation",
-    "Entertainment",
-    "Groceries",
-    "Shopping",
+    "Housing",
     "Utilities",
     "Healthcare",
+    "Groceries",
+    "Entertainment",
+    "Shopping",
     "Travel",
+    "Education",
+    "Amount Received",
+    "Insurance",
+    "Personal Care",
+    "Other",
   ];
 
   const transactionss = [
@@ -395,7 +401,6 @@ function App() {
             exit={{ opacity: 0, y: -20 }}
           >
             <WeeklySpendingTrends transactions={transactions} />
-            
           </motion.div>
         );
       case "cashFlow":

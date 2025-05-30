@@ -14,6 +14,7 @@ import {
   BadgeDollarSign,
 } from "lucide-react";
 import { SavingsGoalTracker } from "./SavingsGoalTracker";
+import { BalanceExplanation } from "./BalanceExplanation";
 
 // Import Transaction type
 interface Transaction {
@@ -73,6 +74,8 @@ export default function FinancialExpenseTracker({
   const [editValue, setEditValue] = useState<string>("");
   const [showSavingsGoals, setShowSavingsGoals] = useState(false);
 
+  
+
   // Update internal state when props change
   useEffect(() => {
     setCurrentBankLimit(bankLimit);
@@ -122,34 +125,23 @@ export default function FinancialExpenseTracker({
     0
   );
 
+  const actualSpendingPerPlannedCategory = Object.entries(
+    actualSpendingPerCategory
+  )
+    .filter(([category]) => plannedAmounts.hasOwnProperty(category))
+    .reduce((acc, [category, amount]) => {
+      acc[category] = amount;
+      return acc;
+    }, {} as Record<string, number>);
+
+  // New total actual spent only on planned categories
+  const totalActualSpentOnPlanned = Object.values(
+    actualSpendingPerPlannedCategory
+  ).reduce((sum, amount) => sum + amount, 0);
+
   // Effective bank amount (including revenue)
   const effectiveBankAmount = bankAmount;
   // const safeBalance = effectiveBankAmount - totalPlanned - currentBankLimit;
-  const usableBalance =
-    effectiveBankAmount - totalActualSpent - currentBankLimit;
-
-  // Status determination
-  const getStatus = () => {
-    if (usableBalance < 0)
-      return {
-        status: "danger",
-        text: "Overspent",
-        color: "text-red-600 bg-red-100",
-      };
-    if (usableBalance < effectiveBankAmount * 0.1)
-      return {
-        status: "warning",
-        text: "Low Funds",
-        color: "text-yellow-600 bg-yellow-100",
-      };
-    return {
-      status: "safe",
-      text: "Safe",
-      color: "text-green-600 bg-green-100",
-    };
-  };
-
-  const statusInfo = getStatus();
 
   // Chart data preparation
   const chartData = expenses.map((exp, index) => ({
@@ -246,11 +238,44 @@ export default function FinancialExpenseTracker({
 
   // Effective bank amount (including revenue)
 
-  const safeBalance =
-    effectiveBankAmount -
-    totalPlanned -
-    currentBankLimit -
-    totalSavingsContributions;
+  const usableBalance =
+    effectiveBankAmount - currentBankLimit - totalSavingsContributions;
+
+  // const safeBalance =
+  //   effectiveBankAmount -
+  //   totalPlanned -
+  //   currentBankLimit -
+  //   totalSavingsContributions;
+
+  const remainingPlanned = Math.max(
+    totalPlanned - totalActualSpentOnPlanned,
+    0
+  );
+
+  const safeBalance = usableBalance - remainingPlanned;
+
+  // Status determination
+  const getStatus = () => {
+    if (usableBalance < 0)
+      return {
+        status: "danger",
+        text: "Overspent",
+        color: "text-red-600 bg-red-100",
+      };
+    if (usableBalance < effectiveBankAmount * 0.1)
+      return {
+        status: "warning",
+        text: "Low Funds",
+        color: "text-yellow-600 bg-yellow-100",
+      };
+    return {
+      status: "safe",
+      text: "Safe",
+      color: "text-green-600 bg-green-100",
+    };
+  };
+
+  const statusInfo = getStatus();
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -323,15 +348,37 @@ export default function FinancialExpenseTracker({
             </div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="text-sm text-gray-600">Total Planned</div>
+            <div className="text-sm text-gray-600">Total Planned Budget</div>
             <div className="text-xl font-bold text-blue-600">
               ₹{totalPlanned.toLocaleString()}
             </div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="text-sm text-gray-600">Total Spent</div>
+            <div className="text-sm text-gray-600">Total Spent on Budget</div>
+            <div className="text-xl font-bold text-purple-600">
+              ₹{totalActualSpentOnPlanned.toLocaleString()}
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-sm text-gray-600">
+              Remaining Amount on Budget
+            </div>
+            <div className="text-xl font-bold text-purple-600">
+              ₹{remainingPlanned.toLocaleString()}
+            </div>
+          </div>
+          {/* <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-sm text-gray-600">Total Spent (Expenses)</div>
             <div className="text-xl font-bold text-purple-600">
               ₹{totalActualSpent.toLocaleString()}
+            </div>
+          </div> */}
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-sm text-gray-600">
+              Total Savings Contributions
+            </div>
+            <div className="text-xl font-bold text-cyan-700">
+              ₹{totalSavingsContributions.toLocaleString()}
             </div>
           </div>
         </div>
@@ -364,6 +411,12 @@ export default function FinancialExpenseTracker({
                     It shows how much you can spend without touching your bank
                     limit and fulfiling the planned expenses.
                   </p>
+                  <p className="mb-1">
+                    Bank Balance - Bank Limit - Total Savings - Remaining Planned
+                  </p>
+                  <p className="mb-1">
+                    Scroll Bottom to see how this is calculated.
+                  </p>
                 </div>
               </div>
             </div>
@@ -381,7 +434,13 @@ export default function FinancialExpenseTracker({
               <div className="group relative">
                 <Info size={14} className="text-gray-400 cursor-help" />
                 <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
-                  Actual remaining balance after expenses
+                  <p className="mb-1">
+                    Actual remaining balance after expenses.
+                  </p>
+
+                  <p className="mb-1">
+                    Bank Balance - Bank Limit - Total Savings
+                  </p>
                 </div>
               </div>
             </div>
@@ -423,14 +482,12 @@ export default function FinancialExpenseTracker({
           </div>
         )}
       </div>
-
       {/* Savings Goals Section - Conditionally Rendered */}
       {showSavingsGoals && (
         <div className="animate-in slide-in-from-top duration-300">
           <SavingsGoalTracker transactions={transactions} />
         </div>
       )}
-
       {/* Alerts & Warnings */}
       {(usableBalance < 0 || safeBalance < 0) && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -458,7 +515,6 @@ export default function FinancialExpenseTracker({
           </div>
         </div>
       )}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Expense Breakdown */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
@@ -617,7 +673,6 @@ export default function FinancialExpenseTracker({
             })}
           </div>
         </div>
-
         {/* Charts */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-4">
@@ -722,8 +777,24 @@ export default function FinancialExpenseTracker({
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </div>{" "}
+      </div>{" "}
+      <BalanceExplanation
+        bankAmount={effectiveBankAmount}
+        bankLimit={currentBankLimit}
+        totalPlanned={totalPlanned}
+        totalActualSpent={totalActualSpent} // optional: not used in current calc
+        totalSavingsContributions={totalSavingsContributions}
+        remainingPlanned={remainingPlanned}
+        totalActualSpentOnPlanned={totalActualSpentOnPlanned}
+      />
     </div>
   );
 }
+
+// const usableBalance =
+//     effectiveBankAmount - currentBankLimit - totalSavingsContributions;
+
+// const remainingPlanned = Math.max(totalPlanned - totalActualSpentOnPlanned, 0);
+
+// const safeBalance = usableBalance - remainingPlanned;

@@ -128,11 +128,11 @@ const PlannedAmountsManager: React.FC<PlannedAmountsManagerProps> = ({
     const defaultAmounts = {
       "Food & Dining": 8000,
       Transportation: 3000,
-      Entertainment: 4000,
-      Shopping: 6000,
-      Utilities: 2500,
-      Healthcare: 2000,
-      Travel: 5000,
+      // Entertainment: 4000,
+      // Shopping: 6000,
+      // Utilities: 2500,
+      // Healthcare: 2000,
+      // Travel: 5000,
     };
     setPlannedAmounts((prev) => ({
       ...prev,
