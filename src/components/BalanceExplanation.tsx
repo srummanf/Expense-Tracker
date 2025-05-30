@@ -159,7 +159,7 @@ export const BalanceExplanation: React.FC<BalanceExplanationProps> = ({
             <tr>
               <td className="px-4 py-2">5</td>
               <td className="px-4 py-2 flex items-center gap-1">
-                <BadgeDollarSign  size={16} /> Remaining Planned Budget
+                <BadgeDollarSign size={16} /> Remaining Planned Budget
               </td>
               <td className="px-4 py-2 text-right">
                 - {remainingPlanned.toLocaleString()}
@@ -187,22 +187,76 @@ export const BalanceExplanation: React.FC<BalanceExplanationProps> = ({
       </div>
 
       {/* Line Chart */}
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="amount"
-              stroke="#3B82F6"
-              strokeWidth={2}
-              activeDot={{ r: 6 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      {/* Number Line Visualization */}
+      <div className="mt-8 space-y-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          {/* Step 1 */}
+          <div className="flex flex-col items-center text-center">
+            <Wallet className="text-blue-600 mb-1" />
+            <div className="font-semibold text-sm">Bank Balance</div>
+            <div className="text-gray-700 text-xs">
+              ₹{bankAmount.toLocaleString()}
+            </div>
+          </div>
+
+          {/* Arrow */}
+          <div className="flex items-center">
+            <div className="w-10 h-1 bg-blue-500" />
+            <span className="mx-2 text-xl">→</span>
+            <div className="w-10 h-1 bg-blue-500" />
+          </div>
+
+          {/* Step 2 */}
+          <div className="flex flex-col items-center text-center">
+            <ShieldCheck className="text-blue-600 mb-1" />
+            <div className="font-semibold text-sm">After Limit</div>
+            <div className="text-gray-700 text-xs">
+              ₹{(bankAmount - bankLimit).toLocaleString()}
+            </div>
+          </div>
+
+          {/* Arrow */}
+          <div className="flex items-center">
+            <div className="w-10 h-1 bg-blue-500" />
+            <span className="mx-2 text-xl">→</span>
+            <div className="w-10 h-1 bg-blue-500" />
+          </div>
+
+          {/* Step 3 */}
+          <div className="flex flex-col items-center text-center">
+            <PiggyBank className="text-blue-600 mb-1" />
+            <div className="font-semibold text-sm">After Savings</div>
+            <div className="text-gray-700 text-xs">
+              ₹{usableBalance.toLocaleString()}
+            </div>
+          </div>
+
+          {/* Arrow */}
+          <div className="flex items-center">
+            <div className="w-10 h-1 bg-blue-500" />
+            <span className="mx-2 text-xl">→</span>
+            <div className="w-10 h-1 bg-blue-500" />
+          </div>
+
+          {/* Step 4 */}
+          <div className="flex flex-col items-center text-center">
+            <PieChart className="text-green-600 mb-1" />
+            <div className="font-semibold text-sm">After Budget</div>
+            <div className="text-gray-700 text-xs">
+              ₹{safeBalance.toLocaleString()}
+            </div>
+          </div>
+        </div>
+
+        {/* Optional: Mini bar below showing % of transition */}
+        <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden mt-4">
+          <div
+            className="h-full bg-blue-500 transition-all duration-300"
+            style={{
+              width: `${(safeBalance / bankAmount) * 100}%`,
+            }}
+          />
+        </div>
       </div>
     </div>
   );

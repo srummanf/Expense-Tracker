@@ -217,7 +217,7 @@ const PlannedAmountsManager: React.FC<PlannedAmountsManagerProps> = ({
           </div>
         </motion.div>
 
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
@@ -241,7 +241,7 @@ const PlannedAmountsManager: React.FC<PlannedAmountsManagerProps> = ({
               <Settings className="w-6 h-6 text-purple-600" />
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
 
       {/* Categories Management */}

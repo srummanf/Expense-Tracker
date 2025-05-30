@@ -52,6 +52,7 @@ const navigationItems = [
   { id: "calendar", label: "Transaction Calendar", icon: Calendar },
   { id: "plannedAmounts", label: "Budget Planning", icon: Settings },
   { id: "budgetOverview", label: "Budget Overview", icon: BadgeDollarSign },
+  { id: "discretionary", label: "50/30/20 Rule", icon: PiggyBank },
   { id: "savings", label: "Saving Goals", icon: Target },
   { id: "weeklyTrends", label: "Weekly Trends", icon: PieChart },
   // { id: "cashFlow", label: "Cash Flow", icon: ArrowDownToLine },
@@ -63,7 +64,6 @@ const navigationItems = [
   { id: "reminders", label: "Bill Reminders", icon: Bell },
   // { id: "investments", label: "Investments", icon: Briefcase },
   { id: "ratios", label: "Expense Ratio", icon: PieChart },
-  { id: "discretionary", label: "Discretionary Analysis", icon: PiggyBank },
   // { id: "chart", label: "Charts", icon: BarChart2 },
   { id: "netWorth", label: "Net Worth", icon: TrendingUp },
   { id: "forecast", label: "Forecast", icon: BarChart2 },
@@ -562,7 +562,7 @@ function App() {
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
             {isSidebarOpen && (
               <h1 className="text-xl font-bold text-gray-900">
-                Finance Tracker
+                Expense Tracker
               </h1>
             )}
             {/* <button
