@@ -56,7 +56,7 @@ const navigationItems = [
   { id: "savings", label: "Saving Goals", icon: Target },
   { id: "weeklyTrends", label: "Weekly Trends", icon: PieChart },
   // { id: "cashFlow", label: "Cash Flow", icon: ArrowDownToLine },
-  { id: "recurring", label: "Recurring", icon: Clock },
+  { id: "recurring", label: "Recurring Transactions", icon: Clock },
   // { id: "budget", label: "Budget", icon: Wallet },
   // { id: "spending", label: "Spending", icon: PieChart },
   { id: "analysis", label: "Graphical Analysis", icon: BarChart2 },

@@ -206,14 +206,18 @@ export function WeeklySpendingTrends({ transactions }: WeeklySpendingTrendsProps
             />
             <Tooltip 
               formatter={(value: number, name) => {
-                return [formatCurrency(value), name === "expenses" ? "Expenses" : "Income"];
+                let label = '';
+                if (name === 'expenses') label = 'Expenses';
+                else if (name === 'revenue') label = 'Income';
+                else label = String(name);
+                return [formatCurrency(value), label];
               }}
               labelFormatter={(label) => `Date: ${label}`}
             />
             <Bar 
               dataKey="revenue" 
               name="Income" 
-              fill="#3b82f6" 
+              fill="#1ba64f" 
               radius={[4, 4, 0, 0]}
               onClick={(data) => setSelectedDay(data.fullDate)} 
             />

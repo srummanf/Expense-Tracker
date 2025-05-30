@@ -359,7 +359,7 @@ export function DiscretionarySpendingAnalysis({
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                 <span className="text-2xl">📈</span>
-                Budget vs Actual Comparison
+                <span className="text-[#b55757]">Target</span> vs <span className="text-[#57b560]">Actual</span> Comparison
               </h3>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -384,13 +384,13 @@ export function DiscretionarySpendingAnalysis({
                     />
                     <Bar
                       dataKey="target"
-                      fill="#e5e7eb"
+                      fill="#b55757"
                       name="target"
                       radius={[4, 4, 0, 0]}
                     />
                     <Bar
                       dataKey="actual"
-                      fill="#3b82f6"
+                      fill="#57b560"
                       name="actual"
                       radius={[4, 4, 0, 0]}
                     />
