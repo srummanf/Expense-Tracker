@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as Progress from "@radix-ui/react-progress";
-import { cn } from "@/lib/utils"; // Or use clsx/twMerge based on your setup
-import { Target } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Target, Info } from "lucide-react";
 import type { Transaction } from "../types";
 
 type SavingsGoal = {
@@ -91,7 +91,7 @@ export const SavingsGoalTracker = ({
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold">Savings Goal Tracker</h3>
+        <h3 className="text-lg font-semibold text-gray-800">Savings Goal Tracker</h3>
         <Target className="text-blue-500" size={24} />
       </div>
 
@@ -107,10 +107,10 @@ export const SavingsGoalTracker = ({
           );
 
           return (
-            <div key={goal.id} className="border rounded-lg p-4">
-              <div className="flex justify-between mb-2">
-                <h4 className="font-medium">{goal.name}</h4>
-                <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+            <div key={goal.id} className="border rounded-lg p-4 shadow-sm bg-gray-50">
+              <div className="flex justify-between mb-2 items-center">
+                <h4 className="font-medium text-gray-700">{goal.name}</h4>
+                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
                   {goal.category}
                 </span>
               </div>
@@ -135,43 +135,46 @@ export const SavingsGoalTracker = ({
                 <span>{daysLeft} days left</span>
               </div>
 
-              <div className="flex gap-2 mt-4">
-                {/* <input
-                  type="number"
-                  className="flex-1 px-3 py-2 border rounded-md"
-                  placeholder="Amount"
-                  onChange={(e) => {
-                    // Handle input for contribution
-                  }}
-                /> */}
-                <input
-                  type="number"
-                  className="flex-1 px-3 py-2 border rounded-md"
-                  placeholder="Amount"
-                  value={contributions[goal.id] || ""}
-                  onChange={(e) => {
-                    const value = parseFloat(e.target.value);
-                    setContributions((prev) => ({
-                      ...prev,
-                      [goal.id]: isNaN(value) ? 0 : value,
-                    }));
-                  }}
-                />
+              <div className="flex gap-2 mt-4 items-end">
+                <div className="flex flex-col flex-1">
+                  <label className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                    Contribution Amount
+                    <div className="group relative inline-block">
+                      <Info size={14} className="text-gray-400 cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                        Add savings towards this goal
+                      </div>
+                    </div>
+                  </label>
+                  <input
+                    type="number"
+                    className="px-3 py-2 border rounded-md text-sm"
+                    placeholder="₹0"
+                    value={contributions[goal.id] || ""}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      setContributions((prev) => ({
+                        ...prev,
+                        [goal.id]: isNaN(value) ? 0 : value,
+                      }));
+                    }}
+                  />
+                </div>
 
                 <button
-                  className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                  className="px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700"
                   onClick={() => {
                     const amount = contributions[goal.id] || 0;
                     if (amount > 0) {
                       handleUpdateGoal(goal.id, amount);
-                      setContributions((prev) => ({ ...prev, [goal.id]: 0 })); // Clear input
+                      setContributions((prev) => ({ ...prev, [goal.id]: 0 }));
                     }
                   }}
                 >
                   Contribute
                 </button>
                 <button
-                  className="px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  className="px-3 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700"
                   onClick={() => handleDeleteGoal(goal.id)}
                 >
                   Delete
@@ -182,69 +185,89 @@ export const SavingsGoalTracker = ({
         })}
       </div>
 
-      <form onSubmit={handleAddGoal} className="mt-6 border-t pt-6">
-        <h4 className="font-medium mb-4">Add New Goal</h4>
+      <form onSubmit={handleAddGoal} className="mt-8 border-t pt-6">
+        <h4 className="font-medium mb-4 text-gray-700">Add New Goal</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder="Goal Name"
-            className="px-3 py-2 border rounded-md"
-            value={newGoal.name}
-            onChange={(e) => setNewGoal({ ...newGoal, name: e.target.value })}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Target Amount"
-            className="px-3 py-2 border rounded-md"
-            value={newGoal.targetAmount || ""}
-            onChange={(e) =>
-              setNewGoal({
-                ...newGoal,
-                targetAmount: parseFloat(e.target.value) || 0,
-              })
-            }
-            required
-          />
-          <input
-            type="number"
-            placeholder="Current Amount"
-            className="px-3 py-2 border rounded-md"
-            value={newGoal.currentAmount || ""}
-            onChange={(e) =>
-              setNewGoal({
-                ...newGoal,
-                currentAmount: parseFloat(e.target.value) || 0,
-              })
-            }
-            required
-          />
-          <input
-            type="date"
-            placeholder="Deadline"
-            className="px-3 py-2 border rounded-md"
-            value={newGoal.deadline}
-            onChange={(e) =>
-              setNewGoal({ ...newGoal, deadline: e.target.value })
-            }
-            required
-          />
-          <input
-            type="text"
-            placeholder="Category"
-            className="px-3 py-2 border rounded-md"
-            value={newGoal.category}
-            onChange={(e) =>
-              setNewGoal({ ...newGoal, category: e.target.value })
-            }
-            required
-          />
-          <button
-            type="submit"
-            className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Add Goal
-          </button>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-500 mb-1">Goal Name</label>
+            <input
+              type="text"
+              placeholder="Emergency Fund"
+              className="px-3 py-2 border rounded-md text-sm"
+              value={newGoal.name}
+              onChange={(e) => setNewGoal({ ...newGoal, name: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-500 mb-1">Target Amount</label>
+            <input
+              type="number"
+              placeholder="10000"
+              className="px-3 py-2 border rounded-md text-sm"
+              value={newGoal.targetAmount || ""}
+              onChange={(e) =>
+                setNewGoal({
+                  ...newGoal,
+                  targetAmount: parseFloat(e.target.value) || 0,
+                })
+              }
+              required
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-500 mb-1">Current Amount</label>
+            <input
+              type="number"
+              placeholder="0"
+              className="px-3 py-2 border rounded-md text-sm"
+              value={newGoal.currentAmount || ""}
+              onChange={(e) =>
+                setNewGoal({
+                  ...newGoal,
+                  currentAmount: parseFloat(e.target.value) || 0,
+                })
+              }
+              required
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-500 mb-1">Deadline</label>
+            <input
+              type="date"
+              className="px-3 py-2 border rounded-md text-sm"
+              value={newGoal.deadline}
+              onChange={(e) =>
+                setNewGoal({ ...newGoal, deadline: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="flex flex-col md:col-span-2">
+            <label className="text-xs text-gray-500 mb-1">Category</label>
+            <input
+              type="text"
+              placeholder="e.g., Travel, Emergency, Education"
+              className="px-3 py-2 border rounded-md text-sm"
+              value={newGoal.category}
+              onChange={(e) =>
+                setNewGoal({ ...newGoal, category: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <button
+              type="submit"
+              className="w-full px-3 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+            >
+              Add Goal
+            </button>
+          </div>
         </div>
       </form>
     </div>
