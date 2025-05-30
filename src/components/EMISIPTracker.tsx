@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CreditCard, TrendingUp, Plus, Trash2, Calculator, PieChart } from "lucide-react";
+import { CreditCard, TrendingUp, Plus, Trash2, Calculator, PieChart, Pencil } from "lucide-react";
 
 type EMI = {
   id: string;
@@ -48,6 +48,25 @@ export const EMISIPTracker = () => {
     startDate: "",
   });
 
+  // Edit state for EMI
+  const [editingEmiId, setEditingEmiId] = useState<string | null>(null);
+  const [editEmi, setEditEmi] = useState({
+    name: "",
+    monthlyAmount: 0,
+    totalDuration: 0,
+    startDate: "",
+  });
+
+  // Edit state for SIP
+  const [editingSipId, setEditingSipId] = useState<string | null>(null);
+  const [editSip, setEditSip] = useState({
+    name: "",
+    sipAmount: 0,
+    duration: 0,
+    expectedReturn: 0,
+    startDate: "",
+  });
+
   // Save to localStorage
   useEffect(() => {
     localStorage.setItem("emiData", JSON.stringify(emis));
@@ -78,6 +97,23 @@ export const EMISIPTracker = () => {
     setEmis(emis.filter((emi) => emi.id !== id));
   };
 
+  const handleEditEmi = (emi: EMI) => {
+    setEditingEmiId(emi.id);
+    setEditEmi({
+      name: emi.name,
+      monthlyAmount: emi.monthlyAmount,
+      totalDuration: emi.totalDuration,
+      startDate: emi.startDate,
+    });
+  };
+  const handleSaveEditEmi = (id: string) => {
+    setEmis(emis.map(emi => emi.id === id ? { ...emi, ...editEmi } : emi));
+    setEditingEmiId(null);
+  };
+  const handleCancelEditEmi = () => {
+    setEditingEmiId(null);
+  };
+
   // SIP Functions
   const handleAddSip = () => {
     if (newSip.name && newSip.sipAmount && newSip.duration && newSip.expectedReturn && newSip.startDate) {
@@ -98,6 +134,24 @@ export const EMISIPTracker = () => {
 
   const handleDeleteSip = (id: string) => {
     setSips(sips.filter((sip) => sip.id !== id));
+  };
+
+  const handleEditSip = (sip: SIP) => {
+    setEditingSipId(sip.id);
+    setEditSip({
+      name: sip.name,
+      sipAmount: sip.sipAmount,
+      duration: sip.duration,
+      expectedReturn: sip.expectedReturn,
+      startDate: sip.startDate,
+    });
+  };
+  const handleSaveEditSip = (id: string) => {
+    setSips(sips.map(sip => sip.id === id ? { ...sip, ...editSip } : sip));
+    setEditingSipId(null);
+  };
+  const handleCancelEditSip = () => {
+    setEditingSipId(null);
   };
 
   // Calculate EMI progress
@@ -210,17 +264,34 @@ export const EMISIPTracker = () => {
           <div className="space-y-4 mb-8">
             {emis.map((emi) => {
               const { progress, remainingMonths, totalAmount, paidAmount } = calculateEmiProgress(emi);
+              const isEditing = editingEmiId === emi.id;
               
               return (
                 <div key={emi.id} className="border rounded-lg p-4 shadow-sm bg-red-50">
                   <div className="flex justify-between items-start mb-3">
-                    <h4 className="font-medium text-gray-700">{emi.name}</h4>
-                    <button
-                      onClick={() => handleDeleteEmi(emi.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        className="font-medium text-gray-700 border px-2 py-1 rounded"
+                        value={editEmi.name}
+                        onChange={e => setEditEmi({ ...editEmi, name: e.target.value })}
+                      />
+                    ) : (
+                      <h4 className="font-medium text-gray-700">{emi.name}</h4>
+                    )}
+                    <div className="flex gap-2">
+                      {isEditing ? (
+                        <>
+                          <button onClick={() => handleSaveEditEmi(emi.id)} className="text-green-600 hover:text-green-800 text-xs font-semibold">Save</button>
+                          <button onClick={handleCancelEditEmi} className="text-gray-500 hover:text-gray-700 text-xs font-semibold">Cancel</button>
+                        </>
+                      ) : (
+                        <>
+                          <button onClick={() => handleEditEmi(emi)} className="text-blue-500 hover:text-blue-700 text-xs font-semibold"><Pencil size={16} /></button>
+                          <button onClick={() => handleDeleteEmi(emi.id)} className="text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
+                        </>
+                      )}
+                    </div>
                   </div>
                   
                   {/* Progress Bar */}
@@ -234,15 +305,42 @@ export const EMISIPTracker = () => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
                       <p className="text-gray-500">Monthly EMI</p>
-                      <p className="font-semibold">₹{emi.monthlyAmount.toLocaleString()}</p>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          className="font-semibold border px-2 py-1 rounded w-full"
+                          value={editEmi.monthlyAmount}
+                          onChange={e => setEditEmi({ ...editEmi, monthlyAmount: parseFloat(e.target.value) || 0 })}
+                        />
+                      ) : (
+                        <p className="font-semibold">₹{emi.monthlyAmount.toLocaleString()}</p>
+                      )}
                     </div>
                     <div>
                       <p className="text-gray-500">Remaining</p>
-                      <p className="font-semibold">{remainingMonths} months</p>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          className="font-semibold border px-2 py-1 rounded w-full"
+                          value={editEmi.totalDuration}
+                          onChange={e => setEditEmi({ ...editEmi, totalDuration: parseInt(e.target.value) || 0 })}
+                        />
+                      ) : (
+                        <p className="font-semibold">{remainingMonths} months</p>
+                      )}
                     </div>
                     <div>
-                      <p className="text-gray-500">Paid</p>
-                      <p className="font-semibold">₹{paidAmount.toLocaleString()}</p>
+                      <p className="text-gray-500">Start Date</p>
+                      {isEditing ? (
+                        <input
+                          type="date"
+                          className="font-semibold border px-2 py-1 rounded w-full"
+                          value={editEmi.startDate}
+                          onChange={e => setEditEmi({ ...editEmi, startDate: e.target.value })}
+                        />
+                      ) : (
+                        <p className="font-semibold">{emi.startDate}</p>
+                      )}
                     </div>
                     <div>
                       <p className="text-gray-500">Total Amount</p>
@@ -325,32 +423,76 @@ export const EMISIPTracker = () => {
           <div className="space-y-4 mb-8">
             {sips.map((sip) => {
               const { totalInvestment, futureValue, gains, gainsPercentage } = calculateSipProjection(sip);
+              const isEditing = editingSipId === sip.id;
               
               return (
                 <div key={sip.id} className="border rounded-lg p-4 shadow-sm bg-green-50">
                   <div className="flex justify-between items-start mb-3">
-                    <h4 className="font-medium text-gray-700">{sip.name}</h4>
-                    <button
-                      onClick={() => handleDeleteSip(sip.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        className="font-medium text-gray-700 border px-2 py-1 rounded"
+                        value={editSip.name}
+                        onChange={e => setEditSip({ ...editSip, name: e.target.value })}
+                      />
+                    ) : (
+                      <h4 className="font-medium text-gray-700">{sip.name}</h4>
+                    )}
+                    <div className="flex gap-2">
+                      {isEditing ? (
+                        <>
+                          <button onClick={() => handleSaveEditSip(sip.id)} className="text-green-600 hover:text-green-800 text-xs font-semibold">Save</button>
+                          <button onClick={handleCancelEditSip} className="text-gray-500 hover:text-gray-700 text-xs font-semibold">Cancel</button>
+                        </>
+                      ) : (
+                        <>
+                          <button onClick={() => handleEditSip(sip)} className="text-blue-500 hover:text-blue-700 text-xs font-semibold"><Pencil size={16} /></button>
+                          <button onClick={() => handleDeleteSip(sip.id)} className="text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm text-gray-500">Monthly SIP</p>
-                        <p className="text-lg font-semibold text-green-600">₹{sip.sipAmount.toLocaleString()}</p>
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            className="text-lg font-semibold text-green-600 border px-2 py-1 rounded w-full"
+                            value={editSip.sipAmount}
+                            onChange={e => setEditSip({ ...editSip, sipAmount: parseFloat(e.target.value) || 0 })}
+                          />
+                        ) : (
+                          <p className="text-lg font-semibold text-green-600">₹{sip.sipAmount.toLocaleString()}</p>
+                        )}
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Duration</p>
-                        <p className="font-semibold">{sip.duration} years</p>
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            className="font-semibold border px-2 py-1 rounded w-full"
+                            value={editSip.duration}
+                            onChange={e => setEditSip({ ...editSip, duration: parseInt(e.target.value) || 0 })}
+                          />
+                        ) : (
+                          <p className="font-semibold">{sip.duration} years</p>
+                        )}
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Expected Return</p>
-                        <p className="font-semibold">{sip.expectedReturn}% p.a.</p>
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            step="0.1"
+                            className="font-semibold border px-2 py-1 rounded w-full"
+                            value={editSip.expectedReturn}
+                            onChange={e => setEditSip({ ...editSip, expectedReturn: parseFloat(e.target.value) || 0 })}
+                          />
+                        ) : (
+                          <p className="font-semibold">{sip.expectedReturn}% p.a.</p>
+                        )}
                       </div>
                     </div>
                     
@@ -368,6 +510,19 @@ export const EMISIPTracker = () => {
                         <p className="font-semibold text-green-600">
                           +₹{gains.toLocaleString()} ({gainsPercentage.toFixed(2)}%)
                         </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Start Date</p>
+                        {isEditing ? (
+                          <input
+                            type="date"
+                            className="font-semibold border px-2 py-1 rounded w-full"
+                            value={editSip.startDate}
+                            onChange={e => setEditSip({ ...editSip, startDate: e.target.value })}
+                          />
+                        ) : (
+                          <p className="font-semibold">{sip.startDate}</p>
+                        )}
                       </div>
                     </div>
                   </div>
