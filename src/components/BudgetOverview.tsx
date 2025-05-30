@@ -43,6 +43,24 @@ interface FinancialTrackerProps {
   onBankLimitChange?: (limit: number) => void;
 }
 
+// Add these to your existing imports
+type EMI = {
+  id: string;
+  name: string;
+  monthlyAmount: number;
+  totalDuration: number; // in months
+  startDate: string;
+};
+
+type SIP = {
+  id: string;
+  name: string;
+  sipAmount: number;
+  duration: number; // in years
+  expectedReturn: number; // percentage
+  startDate: string;
+};
+
 const COLORS = [
   "#3B82F6",
   "#EF4444",
@@ -55,6 +73,24 @@ const COLORS = [
   "#6366F1",
   "#84CC16",
 ];
+
+// Helper functions to add before the main component
+const calculateEmiProgress = (emi: EMI) => {
+  const startDate = new Date(emi.startDate);
+  const currentDate = new Date();
+  const monthsPassed = Math.max(
+    0,
+    (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (currentDate.getMonth() - startDate.getMonth())
+  );
+  const progress = Math.min((monthsPassed / emi.totalDuration) * 100, 100);
+  const remainingMonths = Math.max(0, emi.totalDuration - monthsPassed);
+  const totalAmount = emi.monthlyAmount * emi.totalDuration;
+  const paidAmount =
+    emi.monthlyAmount * Math.min(monthsPassed, emi.totalDuration);
+
+  return { progress, remainingMonths, totalAmount, paidAmount };
+};
 
 export default function FinancialExpenseTracker({
   bankAmount,
@@ -96,6 +132,24 @@ export default function FinancialExpenseTracker({
         transactionDate.getMonth() === currentMonth
       );
     });
+  };
+
+  // Helper functions to add before the main component
+  const calculateEmiProgress = (emi: EMI) => {
+    const startDate = new Date(emi.startDate);
+    const currentDate = new Date();
+    const monthsPassed = Math.max(
+      0,
+      (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
+        (currentDate.getMonth() - startDate.getMonth())
+    );
+    const progress = Math.min((monthsPassed / emi.totalDuration) * 100, 100);
+    const remainingMonths = Math.max(0, emi.totalDuration - monthsPassed);
+    const totalAmount = emi.monthlyAmount * emi.totalDuration;
+    const paidAmount =
+      emi.monthlyAmount * Math.min(monthsPassed, emi.totalDuration);
+
+    return { progress, remainingMonths, totalAmount, paidAmount };
   };
 
   // Get current month transactions
@@ -252,10 +306,51 @@ export default function FinancialExpenseTracker({
     return 0;
   })();
 
+  // Calculate total EMI amounts from localStorage
+  // Calculate total EMI amounts from localStorage
+  const totalEMIAmount = (() => {
+    try {
+      // Get EMI data
+      const savedEmis = localStorage.getItem("emiData");
+      const emis: EMI[] = savedEmis ? JSON.parse(savedEmis) : [];
+
+      // Calculate total monthly EMI outflow for active EMIs only
+      return emis.reduce((sum, emi) => {
+        const { remainingMonths } = calculateEmiProgress(emi);
+        return sum + (remainingMonths > 0 ? emi.monthlyAmount : 0);
+      }, 0);
+    } catch (error) {
+      console.error("Error reading EMI data:", error);
+      return 0;
+    }
+  })();
+
+  // Calculate total SIP amounts from localStorage
+  const totalSIPAmount = (() => {
+    try {
+      // Get SIP data
+      const savedSips = localStorage.getItem("sipData");
+      const sips: SIP[] = savedSips ? JSON.parse(savedSips) : [];
+
+      // Calculate total monthly SIP investment
+      return sips.reduce((sum, sip) => sum + sip.sipAmount, 0);
+    } catch (error) {
+      console.error("Error reading SIP data:", error);
+      return 0;
+    }
+  })();
+
   // Effective bank amount (including revenue)
 
+  // const usableBalance =
+  //   effectiveBankAmount - currentBankLimit - totalSavingsContributions;
+
   const usableBalance =
-    effectiveBankAmount - currentBankLimit - totalSavingsContributions;
+    effectiveBankAmount -
+    currentBankLimit -
+    totalSavingsContributions -
+    totalSIPAmount -
+    totalEMIAmount;
 
   // const safeBalance =
   //   effectiveBankAmount -
@@ -453,9 +548,7 @@ export default function FinancialExpenseTracker({
             </div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="text-sm text-gray-600">
-              Remaining Budget
-            </div>
+            <div className="text-sm text-gray-600">Remaining Budget</div>
             <div className="text-xl font-bold text-purple-600">
               ₹{remainingPlanned.toLocaleString()}
             </div>
@@ -466,6 +559,18 @@ export default function FinancialExpenseTracker({
               ₹{totalActualSpent.toLocaleString()}
             </div>
           </div> */}
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-sm text-gray-600">Monthly EMI Outflow</div>
+            <div className="text-xl font-bold text-red-600">
+              ₹{totalEMIAmount.toLocaleString()}
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-sm text-gray-600">Monthly SIP Investment</div>
+            <div className="text-xl font-bold text-green-600">
+              ₹{totalSIPAmount.toLocaleString()}
+            </div>
+          </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
             <div className="text-sm text-gray-600">
               Total Savings Contributions
@@ -504,10 +609,7 @@ export default function FinancialExpenseTracker({
                     It shows how much you can spend without touching your bank
                     limit and fulfiling the planned expenses.
                   </p>
-                  <p className="mb-1">
-                    Usable Balance - Remaining
-                    Planned
-                  </p>
+                  <p className="mb-1">Usable Balance - Remaining Planned</p>
                   <p className="mb-1">
                     Scroll Bottom to see how this is calculated.
                   </p>
@@ -881,6 +983,8 @@ export default function FinancialExpenseTracker({
         totalSavingsContributions={totalSavingsContributions}
         remainingPlanned={remainingPlanned}
         totalActualSpentOnPlanned={totalActualSpentOnPlanned}
+        totalSIPAmount={totalSIPAmount}
+        totalEMIAmount={totalEMIAmount}
       />
     </div>
   );

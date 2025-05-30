@@ -1,0 +1,456 @@
+import React, { useState, useEffect } from "react";
+import { CreditCard, TrendingUp, Plus, Trash2, Calculator, PieChart } from "lucide-react";
+
+type EMI = {
+  id: string;
+  name: string;
+  monthlyAmount: number;
+  totalDuration: number; // in months
+  startDate: string;
+};
+
+type SIP = {
+  id: string;
+  name: string;
+  sipAmount: number;
+  duration: number; // in years
+  expectedReturn: number; // percentage
+  startDate: string;
+};
+
+export const EMISIPTracker = () => {
+  const [activeTab, setActiveTab] = useState<'emi' | 'sip'>('emi');
+  
+  // EMI State
+  const [emis, setEmis] = useState<EMI[]>(() => {
+    const saved = localStorage.getItem("emiData");
+    return saved ? JSON.parse(saved) : [];
+  });
+  
+  const [newEmi, setNewEmi] = useState({
+    name: "",
+    monthlyAmount: 0,
+    totalDuration: 0,
+    startDate: "",
+  });
+
+  // SIP State
+  const [sips, setSips] = useState<SIP[]>(() => {
+    const saved = localStorage.getItem("sipData");
+    return saved ? JSON.parse(saved) : [];
+  });
+  
+  const [newSip, setNewSip] = useState({
+    name: "",
+    sipAmount: 0,
+    duration: 0,
+    expectedReturn: 0,
+    startDate: "",
+  });
+
+  // Save to localStorage
+  useEffect(() => {
+    localStorage.setItem("emiData", JSON.stringify(emis));
+  }, [emis]);
+
+  useEffect(() => {
+    localStorage.setItem("sipData", JSON.stringify(sips));
+  }, [sips]);
+
+  // EMI Functions
+  const handleAddEmi = () => {
+    if (newEmi.name && newEmi.monthlyAmount && newEmi.totalDuration && newEmi.startDate) {
+      const emiToAdd = {
+        ...newEmi,
+        id: crypto.randomUUID(),
+      };
+      setEmis([...emis, emiToAdd]);
+      setNewEmi({
+        name: "",
+        monthlyAmount: 0,
+        totalDuration: 0,
+        startDate: "",
+      });
+    }
+  };
+
+  const handleDeleteEmi = (id: string) => {
+    setEmis(emis.filter((emi) => emi.id !== id));
+  };
+
+  // SIP Functions
+  const handleAddSip = () => {
+    if (newSip.name && newSip.sipAmount && newSip.duration && newSip.expectedReturn && newSip.startDate) {
+      const sipToAdd = {
+        ...newSip,
+        id: crypto.randomUUID(),
+      };
+      setSips([...sips, sipToAdd]);
+      setNewSip({
+        name: "",
+        sipAmount: 0,
+        duration: 0,
+        expectedReturn: 0,
+        startDate: "",
+      });
+    }
+  };
+
+  const handleDeleteSip = (id: string) => {
+    setSips(sips.filter((sip) => sip.id !== id));
+  };
+
+  // Calculate EMI progress
+  const calculateEmiProgress = (emi: EMI) => {
+    const startDate = new Date(emi.startDate);
+    const currentDate = new Date();
+    const monthsPassed = Math.max(0, 
+      (currentDate.getFullYear() - startDate.getFullYear()) * 12 + 
+      (currentDate.getMonth() - startDate.getMonth())
+    );
+    const progress = Math.min((monthsPassed / emi.totalDuration) * 100, 100);
+    const remainingMonths = Math.max(0, emi.totalDuration - monthsPassed);
+    const totalAmount = emi.monthlyAmount * emi.totalDuration;
+    const paidAmount = emi.monthlyAmount * Math.min(monthsPassed, emi.totalDuration);
+    
+    return { progress, remainingMonths, totalAmount, paidAmount };
+  };
+
+  // Calculate SIP projections
+  const calculateSipProjection = (sip: SIP) => {
+    const monthlyRate = sip.expectedReturn / 100 / 12;
+    const months = sip.duration * 12;
+    const totalInvestment = sip.sipAmount * months;
+    
+    // Future Value of SIP calculation
+    const futureValue = sip.sipAmount * 
+      (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate));
+    
+    const gains = futureValue - totalInvestment;
+    const gainsPercentage = (gains / totalInvestment) * 100;
+    
+    return { totalInvestment, futureValue, gains, gainsPercentage };
+  };
+
+  // Calculate total monthly outflow for EMIs
+  const totalEmiOutflow = emis.reduce((sum, emi) => {
+    const { remainingMonths } = calculateEmiProgress(emi);
+    return sum + (remainingMonths > 0 ? emi.monthlyAmount : 0);
+  }, 0);
+
+  // Calculate total monthly SIP investment
+  const totalSipInvestment = sips.reduce((sum, sip) => sum + sip.sipAmount, 0);
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-gray-800">EMI & SIP Tracker</h3>
+        <div className="flex gap-2">
+          <CreditCard className="text-red-500" size={24} />
+          <TrendingUp className="text-green-500" size={24} />
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+          <div className="flex items-center gap-2 mb-2">
+            <CreditCard className="text-red-500" size={20} />
+            <h4 className="font-medium text-red-700">Monthly EMI Outflow</h4>
+          </div>
+          <p className="text-2xl font-bold text-red-600">₹{totalEmiOutflow.toLocaleString()}</p>
+          <p className="text-sm text-red-600">{emis.length} active EMIs</p>
+        </div>
+        
+        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="text-green-500" size={20} />
+            <h4 className="font-medium text-green-700">Monthly SIP Investment</h4>
+          </div>
+          <p className="text-2xl font-bold text-green-600">₹{totalSipInvestment.toLocaleString()}</p>
+          <p className="text-sm text-green-600">{sips.length} active SIPs</p>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="flex border-b mb-6">
+        <button
+          className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+            activeTab === 'emi'
+              ? 'border-red-500 text-red-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+          onClick={() => setActiveTab('emi')}
+        >
+          <div className="flex items-center gap-2">
+            <CreditCard size={16} />
+            EMI Tracker
+          </div>
+        </button>
+        <button
+          className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+            activeTab === 'sip'
+              ? 'border-green-500 text-green-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+          onClick={() => setActiveTab('sip')}
+        >
+          <div className="flex items-center gap-2">
+            <TrendingUp size={16} />
+            SIP Tracker
+          </div>
+        </button>
+      </div>
+
+      {/* EMI Tab Content */}
+      {activeTab === 'emi' && (
+        <div>
+          {/* EMI List */}
+          <div className="space-y-4 mb-8">
+            {emis.map((emi) => {
+              const { progress, remainingMonths, totalAmount, paidAmount } = calculateEmiProgress(emi);
+              
+              return (
+                <div key={emi.id} className="border rounded-lg p-4 shadow-sm bg-red-50">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-medium text-gray-700">{emi.name}</h4>
+                    <button
+                      onClick={() => handleDeleteEmi(emi.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+                    <div 
+                      className="bg-red-500 h-3 rounded-full transition-all duration-500" 
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <p className="text-gray-500">Monthly EMI</p>
+                      <p className="font-semibold">₹{emi.monthlyAmount.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Remaining</p>
+                      <p className="font-semibold">{remainingMonths} months</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Paid</p>
+                      <p className="font-semibold">₹{paidAmount.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Total Amount</p>
+                      <p className="font-semibold">₹{totalAmount.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Add EMI Form */}
+          <div className="border-t pt-6">
+            <h4 className="font-medium mb-4 text-gray-700 flex items-center gap-2">
+              <Plus size={16} />
+              Add New EMI
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">EMI Name</label>
+                <input
+                  type="text"
+                  placeholder="Home Loan"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newEmi.name}
+                  onChange={(e) => setNewEmi({ ...newEmi, name: e.target.value })}
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Monthly Amount</label>
+                <input
+                  type="number"
+                  placeholder="25000"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newEmi.monthlyAmount || ""}
+                  onChange={(e) => setNewEmi({ ...newEmi, monthlyAmount: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Total Duration (Months)</label>
+                <input
+                  type="number"
+                  placeholder="240"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newEmi.totalDuration || ""}
+                  onChange={(e) => setNewEmi({ ...newEmi, totalDuration: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Start Date</label>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newEmi.startDate}
+                  onChange={(e) => setNewEmi({ ...newEmi, startDate: e.target.value })}
+                />
+              </div>
+              
+              <div className="md:col-span-2">
+                <button
+                  onClick={handleAddEmi}
+                  className="w-full px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 flex items-center justify-center gap-2"
+                >
+                  <Plus size={16} />
+                  Add EMI
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SIP Tab Content */}
+      {activeTab === 'sip' && (
+        <div>
+          {/* SIP List */}
+          <div className="space-y-4 mb-8">
+            {sips.map((sip) => {
+              const { totalInvestment, futureValue, gains, gainsPercentage } = calculateSipProjection(sip);
+              
+              return (
+                <div key={sip.id} className="border rounded-lg p-4 shadow-sm bg-green-50">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-medium text-gray-700">{sip.name}</h4>
+                    <button
+                      onClick={() => handleDeleteSip(sip.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-sm text-gray-500">Monthly SIP</p>
+                        <p className="text-lg font-semibold text-green-600">₹{sip.sipAmount.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Duration</p>
+                        <p className="font-semibold">{sip.duration} years</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Expected Return</p>
+                        <p className="font-semibold">{sip.expectedReturn}% p.a.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-sm text-gray-500">Total Investment</p>
+                        <p className="text-lg font-semibold">₹{totalInvestment.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Projected Value</p>
+                        <p className="text-lg font-semibold text-green-600">₹{futureValue.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Expected Gains</p>
+                        <p className="font-semibold text-green-600">
+                          +₹{gains.toLocaleString()} ({gainsPercentage.toFixed(2)}%)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Add SIP Form */}
+          <div className="border-t pt-6">
+            <h4 className="font-medium mb-4 text-gray-700 flex items-center gap-2">
+              <Plus size={16} />
+              Add New SIP
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">SIP Name</label>
+                <input
+                  type="text"
+                  placeholder="Large Cap Fund"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newSip.name}
+                  onChange={(e) => setNewSip({ ...newSip, name: e.target.value })}
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Monthly SIP Amount</label>
+                <input
+                  type="number"
+                  placeholder="5000"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newSip.sipAmount || ""}
+                  onChange={(e) => setNewSip({ ...newSip, sipAmount: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Duration (Years)</label>
+                <input
+                  type="number"
+                  placeholder="5"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newSip.duration || ""}
+                  onChange={(e) => setNewSip({ ...newSip, duration: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Expected Return (%)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  placeholder="12.5"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newSip.expectedReturn || ""}
+                  onChange={(e) => setNewSip({ ...newSip, expectedReturn: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="text-xs text-gray-500 mb-1 block">Start Date</label>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                  value={newSip.startDate}
+                  onChange={(e) => setNewSip({ ...newSip, startDate: e.target.value })}
+                />
+              </div>
+              
+              <div className="md:col-span-2">
+                <button
+                  onClick={handleAddSip}
+                  className="w-full px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 flex items-center justify-center gap-2"
+                >
+                  <Plus size={16} />
+                  Add SIP
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

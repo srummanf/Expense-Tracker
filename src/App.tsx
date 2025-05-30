@@ -44,16 +44,18 @@ import { ExpenseToIncomeRatioTracker } from "./components/ExpenseToIncomeRatioTr
 import { DiscretionarySpendingAnalysis } from "./components/DiscretionarySpendingAnalysis";
 import BudgetOverview from "./components/BudgetOverview";
 import PlannedAmountsManager from "./components/PlannedAmountsManager";
+import { EMISIPTracker } from "./components/EMISIPTracker";
 
 // Navigation items configuration
 const navigationItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "transactions", label: "All Transactions", icon: List },
   { id: "calendar", label: "Transaction Calendar", icon: Calendar },
-  { id: "plannedAmounts", label: "Budget Planning", icon: Settings },
   { id: "budgetOverview", label: "Budget Overview", icon: BadgeDollarSign },
   { id: "discretionary", label: "50/30/20 Rule", icon: PiggyBank },
+  { id: "plannedAmounts", label: "Budget Planning", icon: Settings },
   { id: "savings", label: "Saving Goals", icon: Target },
+  { id: "emisip", label: "EMI SIP Goals", icon: Target },
   { id: "reminders", label: "Bill Reminders", icon: Bell },
   { id: "weeklyTrends", label: "Weekly Trends", icon: PieChart },
   { id: "recurring", label: "Recurring Transactions", icon: Clock },
@@ -467,6 +469,16 @@ function App() {
             <SavingsGoalTracker transactions={transactions} />
           </motion.div>
         );
+      case "emisip":
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <EMISIPTracker />
+          </motion.div>
+        );
       case "health":
         return (
           <motion.div
@@ -484,7 +496,7 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <BillReminders transactions={transactions} />
+            <BillReminders />
           </motion.div>
         );
       case "investments":
