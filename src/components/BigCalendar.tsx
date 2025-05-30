@@ -156,7 +156,7 @@ export function BigCalendar({ transactions }: BigCalendarProps) {
               <Popover.Trigger asChild>
                 <div
                   className={`
-                    relative h-24 p-2 border rounded-md cursor-pointer
+                    relative h-[4.1rem] p-2 border rounded-md cursor-pointer
                     ${isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-400"}
                     ${hasTx ? "border-blue-300" : "border-gray-200"}
                     hover:bg-gray-50 transition-colors

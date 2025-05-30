@@ -252,6 +252,8 @@ const FinancialHealthScore: React.FC<FinancialHealthScoreProps> = ({ transaction
         </div>
       </div>
 
+      
+
       {/* Monthly Trend Chart */}
       <div className="bg-gray-50 rounded-lg p-6">
         <div className="flex items-center space-x-2 mb-4">

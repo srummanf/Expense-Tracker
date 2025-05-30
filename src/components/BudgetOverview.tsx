@@ -447,14 +447,14 @@ export default function FinancialExpenseTracker({
             </div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="text-sm text-gray-600">Total Spent on Budget</div>
+            <div className="text-sm text-gray-600">Spent This Month</div>
             <div className="text-xl font-bold text-purple-600">
               ₹{totalActualSpentOnPlanned.toLocaleString()}
             </div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
             <div className="text-sm text-gray-600">
-              Remaining Amount on Budget
+              Remaining Budget
             </div>
             <div className="text-xl font-bold text-purple-600">
               ₹{remainingPlanned.toLocaleString()}

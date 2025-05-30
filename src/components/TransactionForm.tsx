@@ -134,7 +134,7 @@ export function TransactionForm({
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type
+              Type*
             </label>
             <select
               value={formData.type}
@@ -153,7 +153,7 @@ export function TransactionForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount
+              Amount*
             </label>
             <input
               type="number"
@@ -170,7 +170,7 @@ export function TransactionForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date
+              Date*
             </label>
             <input
               type="date"
@@ -185,7 +185,7 @@ export function TransactionForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Category
+              Category*
             </label>
             <Listbox
               value={formData.category}
@@ -298,7 +298,6 @@ export function TransactionForm({
             </label>
             <input
               type="text"
-              required
               value={formData.reason}
               onChange={(e) =>
                 setFormData({ ...formData, reason: e.target.value })
@@ -309,23 +308,7 @@ export function TransactionForm({
           </div>
         </div>
 
-        {/* Add Category */}
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Add new category"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="button"
-            onClick={handleAddCategory}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Add
-          </button>
-        </div>
+        
 
         {/* Action Buttons */}
         <div className="flex gap-4">
@@ -362,6 +345,24 @@ export function TransactionForm({
             className="hidden"
             onChange={handleFileChange}
           />
+        </div>
+
+        {/* Add Category */}
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder="Add new category"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="button"
+            onClick={handleAddCategory}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Add
+          </button>
         </div>
       </div>
     </motion.form>
