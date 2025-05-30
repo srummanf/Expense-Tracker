@@ -131,20 +131,20 @@ export const BalanceExplanation: React.FC<BalanceExplanationProps> = ({
             </tr>
             <tr>
               <td className="px-4 py-2">5</td>
-              <td className="px-4 py-2 flex items-center gap-1">
+              <td className="px-4 py-2 flex items-center gap-1 text-gray-600" >
                 <PieChart size={16} /> Total Planned Budget
               </td>
-              <td className="px-4 py-2 text-right">
+              <td className="px-4 py-2 text-right text-gray-600">
                 {" "}
                 {totalPlanned.toLocaleString()}
               </td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 text-gray-600">
                 Amount you've planned to spend, based on the Budget Planning.
               </td>
             </tr>
 
-            <tr>
-              <td className="px-4 py-2">5</td>
+            <tr className="text-gray-600">
+              <td className="px-4 py-2">6</td>
               <td className="px-4 py-2 flex items-center gap-1">
                 <CreditCard size={16} /> Total Actual Spent On Planned Budget
               </td>
@@ -156,8 +156,8 @@ export const BalanceExplanation: React.FC<BalanceExplanationProps> = ({
                 Amount you've spent on the Budget Planning.
               </td>
             </tr>
-            <tr>
-              <td className="px-4 py-2">5</td>
+            <tr className="text-gray-900 font-semibold">
+              <td className="px-4 py-2">7</td>
               <td className="px-4 py-2 flex items-center gap-1">
                 <BadgeDollarSign size={16} /> Remaining Planned Budget
               </td>
@@ -170,7 +170,7 @@ export const BalanceExplanation: React.FC<BalanceExplanationProps> = ({
             </tr>
 
             <tr className="bg-green-100 font-semibold">
-              <td className="px-4 py-2">6</td>
+              <td className="px-4 py-2">8</td>
               <td className="px-4 py-2 flex items-center gap-1">
                 <TrendingDown size={16} /> Safe Balance
               </td>

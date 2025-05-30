@@ -37,7 +37,7 @@ import { RecurringTransactionsAnalysis } from "./components/RecurringTransaction
 import { WeeklySpendingTrends } from "./components/WeeklySpendingTrends";
 import { MonthlySpendingCalendar } from "./components/MonthlySpendingCalendar";
 import { SavingsGoalTracker } from "./components/SavingsGoalTracker";
-import { FinancialHealthScore } from "./components/FinancialHealthScore";
+import  FinancialHealthScore  from "./components/FinancialHealthScore";
 import { BillReminders } from "./components/BillReminders";
 import { InvestmentPortfolioTracker } from "./components/InvestmentPortfolioTracker";
 import { ExpenseToIncomeRatioTracker } from "./components/ExpenseToIncomeRatioTracker";
@@ -55,18 +55,18 @@ const navigationItems = [
   { id: "discretionary", label: "50/30/20 Rule", icon: PiggyBank },
   { id: "savings", label: "Saving Goals", icon: Target },
   { id: "weeklyTrends", label: "Weekly Trends", icon: PieChart },
-  // { id: "cashFlow", label: "Cash Flow", icon: ArrowDownToLine },
   { id: "recurring", label: "Recurring Transactions", icon: Clock },
-  // { id: "budget", label: "Budget", icon: Wallet },
-  // { id: "spending", label: "Spending", icon: PieChart },
-  { id: "analysis", label: "Graphical Analysis", icon: BarChart2 },
   { id: "health", label: "Financial Health", icon: Shield },
+  { id: "analysis", label: "Graphical Analysis", icon: BarChart2 },
   { id: "reminders", label: "Bill Reminders", icon: Bell },
-  // { id: "investments", label: "Investments", icon: Briefcase },
   { id: "ratios", label: "Expense Ratio", icon: PieChart },
-  // { id: "chart", label: "Charts", icon: BarChart2 },
   { id: "netWorth", label: "Net Worth", icon: TrendingUp },
   { id: "forecast", label: "Forecast", icon: BarChart2 },
+  // { id: "cashFlow", label: "Cash Flow", icon: ArrowDownToLine },
+  // { id: "budget", label: "Budget", icon: Wallet },
+  // { id: "spending", label: "Spending", icon: PieChart },
+  // { id: "investments", label: "Investments", icon: Briefcase },
+  // { id: "chart", label: "Charts", icon: BarChart2 },
 ];
 
 function App() {
