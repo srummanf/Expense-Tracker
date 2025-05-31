@@ -244,6 +244,9 @@ function App() {
 
   const balance = totalRevenue - totalExpenses;
 
+  const saved = localStorage.getItem("safeBalance");
+  const parsedSafeBalance = saved ? parseFloat(saved) : 0;
+
   //   const sampleData = {
   //   bankAmount: balance,
   //   bankLimit: 5000,
@@ -697,7 +700,24 @@ function App() {
                     <p className="text-sm font-bold">₹{balance.toFixed(2)}</p>
                   </div>
                 </motion.div>
-                
+                <motion.div
+                  initial={{ scale: 1 }}
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 0.5 }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    parsedSafeBalance >= 0
+                      ? "bg-green-100 text-green-700 shadow-lg border border-green-200"
+                      : "bg-red-50 text-red-700"
+                  }`}
+                >
+                  <Wallet size={20} />
+                  <div>
+                    <p className="text-xs font-medium">Safe Balance</p>
+                    <p className="text-sm font-bold">
+                      ₹{parsedSafeBalance.toFixed(2)}
+                    </p>
+                  </div>
+                </motion.div>
               </div>
               <button
                 onClick={exportToCSV}

@@ -364,6 +364,9 @@ export default function FinancialExpenseTracker({
   );
 
   const safeBalance = usableBalance - remainingPlanned;
+  useEffect(() => {
+  localStorage.setItem("safeBalance", safeBalance.toString());
+}, [safeBalance]);
 
   // Status determination
   const getStatus = () => {
@@ -394,8 +397,10 @@ export default function FinancialExpenseTracker({
     return now.toLocaleDateString("en-US", { month: "long", year: "numeric" });
   };
 
+  
+
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       {/* Month Display */}
       <div className="mb-2 text-center">
         <h2 className="text-xl font-semibold text-gray-800">
