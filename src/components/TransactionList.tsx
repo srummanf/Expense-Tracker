@@ -28,19 +28,19 @@ interface TransactionListProps {
 }
 
 const ITEMS_PER_PAGE = 10;
-const CATEGORIES = [
-  "Food & Dining",
-  "Transportation",
-  "Housing",
-  "Utilities",
-  "Healthcare",
-  "Entertainment",
-  "Shopping",
-  "Travel",
-  "Education",
-  "Amount Received",
-  "Other",
-];
+// const CATEGORIES = [
+//   "Food & Dining",
+//   "Transportation",
+//   "Housing",
+//   "Utilities",
+//   "Healthcare",
+//   "Entertainment",
+//   "Shopping",
+//   "Travel",
+//   "Education",
+//   "Amount Received",
+//   "Other",
+// ];
 
 type SortOrder = "asc" | "desc";
 type SortField = "date" | "amount" | "none";
@@ -66,6 +66,37 @@ export function TransactionList({
     typeFilter: "all",
     categoryFilters: [],
   });
+
+  const CATEGORIES = useMemo(() => {
+  const stored = localStorage.getItem("transactionCategories");
+  let customCategories: string[] = [];
+
+  try {
+    if (stored) {
+      customCategories = JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error("Invalid categories in localStorage", error);
+  }
+
+  const predefined = [
+    "Food & Dining",
+    "Transportation",
+    "Housing",
+    "Utilities",
+    "Healthcare",
+    "Entertainment",
+    "Shopping",
+    "Travel",
+    "Education",
+    "Amount Received",
+    "Other",
+  ];
+
+  const allCategories = Array.from(new Set([...predefined, ...customCategories]));
+  return allCategories;
+}, []);
+
 
   const filteredAndSortedTransactions = useMemo(() => {
     let result = [...transactions];

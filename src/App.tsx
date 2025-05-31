@@ -37,8 +37,8 @@ import { RecurringTransactionsAnalysis } from "./components/RecurringTransaction
 import { WeeklySpendingTrends } from "./components/WeeklySpendingTrends";
 import { MonthlySpendingCalendar } from "./components/MonthlySpendingCalendar";
 import { SavingsGoalTracker } from "./components/SavingsGoalTracker";
-import  FinancialHealthScore  from "./components/FinancialHealthScore";
-import  BillReminders  from "./components/BillReminders";
+import FinancialHealthScore from "./components/FinancialHealthScore";
+import BillReminders from "./components/BillReminders";
 import { InvestmentPortfolioTracker } from "./components/InvestmentPortfolioTracker";
 import { ExpenseToIncomeRatioTracker } from "./components/ExpenseToIncomeRatioTracker";
 import { DiscretionarySpendingAnalysis } from "./components/DiscretionarySpendingAnalysis";
@@ -194,30 +194,44 @@ function App() {
     reader.readAsText(file);
   };
 
-  const exportToCSV = () => {
-    const headers = ["Date,Type,Amount,Reason,Category\n"];
-    const csvData = transactions.map(
-      (transaction) =>
-        `${transaction.date},${transaction.type},${transaction.amount},${
-          transaction.reason
-        },${transaction.category || "Other"}\n`
-    );
-    const blob = new Blob([...headers, ...csvData], { type: "text/csv" });
+  const exportToCSV = async () => {
+    try {
+      const headers = ["Date,Type,Amount,Reason,Category\n"];
+      const csvData = transactions
+        .map(
+          (transaction) =>
+            `${transaction.date},${transaction.type},${transaction.amount},${
+              transaction.reason
+            },${transaction.category || "Other"}\n`
+        )
+        .join("");
 
-    const now = new Date();
-    const day = now.getDate();
-    const monthName = now.toLocaleString("default", { month: "long" });
-    const year = now.getFullYear();
-    const formattedDate = `${day}_${monthName}_${year}`;
+      const now = new Date();
+      const day = now.getDate();
+      const monthName = now.toLocaleString("default", { month: "long" });
+      const year = now.getFullYear();
+      const formattedDate = `${day}_${monthName}_${year}`;
+      const filename = `financial_transaction_${formattedDate}.csv`;
 
-    const filename = `financial_transaction_${formattedDate}.csv`;
+      // Show file save picker
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [
+          {
+            description: "CSV Files",
+            accept: { "text/csv": [".csv"] },
+          },
+        ],
+      });
 
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-    window.URL.revokeObjectURL(url);
+      const writable = await handle.createWritable();
+      await writable.write(headers + csvData);
+      await writable.close();
+
+      alert("CSV exported successfully!");
+    } catch (err) {
+      console.error("Export failed:", err);
+    }
   };
 
   const totalRevenue = transactions
@@ -679,10 +693,11 @@ function App() {
                 >
                   <Wallet size={20} />
                   <div>
-                    <p className="text-xs font-medium">Balance</p>
+                    <p className="text-xs font-medium">Bank Balance</p>
                     <p className="text-sm font-bold">₹{balance.toFixed(2)}</p>
                   </div>
                 </motion.div>
+                
               </div>
               <button
                 onClick={exportToCSV}

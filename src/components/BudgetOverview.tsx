@@ -397,7 +397,7 @@ export default function FinancialExpenseTracker({
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Month Display */}
-      <div className="mb-4 text-center">
+      <div className="mb-2 text-center">
         <h2 className="text-xl font-semibold text-gray-800">
           Budget for {getCurrentMonthDisplay()}
         </h2>
@@ -405,7 +405,9 @@ export default function FinancialExpenseTracker({
           Budget resets automatically each month
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      
+      {/* Header 3 cards */}
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-blue-50 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-blue-800">
             Total Planned Budget
@@ -430,7 +432,7 @@ export default function FinancialExpenseTracker({
             ₹{remainingPlanned.toLocaleString()}
           </p>
         </div>
-      </div>
+      </div> */}
       {/* Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
@@ -493,7 +495,77 @@ export default function FinancialExpenseTracker({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {/* Current Bank Balance, Safe Balance , Usable Balance */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+              Current Bank Balance
+              <div className="group relative">
+                <Info size={14} className="text-gray-400 cursor-help" />
+                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                  Current bank amount including revenue added
+                </div>
+              </div>
+            </div>
+            <div className="text-xl font-bold text-indigo-600">
+              ₹{effectiveBankAmount.toLocaleString()}
+            </div>
+          </div>
+          <div className="bg-[#c5ecb9] p-4 rounded-lg shadow-md">
+            <div className="flex flex-wrap items-center gap-2 mb-1 text-sm font-medium text-gray-900">
+              <h2 className="whitespace-normal break-words">Safe Balance</h2>
+              <div className="group relative">
+                <Info size={16} className="text-gray-900 cursor-help" />
+                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
+                  <p className="mb-1">
+                    Amount safe to spend based on planned expenses.
+                  </p>
+                  <p className="mb-1">
+                    It shows how much you can spend without touching your bank
+                    limit and fulfiling the planned expenses.
+                  </p>
+                  <p className="mb-1">Usable Balance - Remaining Planned</p>
+                  <p className="mb-1">
+                    Scroll Bottom to see how this is calculated.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className={`text-xl font-bold ${
+                safeBalance >= 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              ₹{safeBalance.toLocaleString()}
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+              Usable Balance
+              <div className="group relative">
+                <Info size={14} className="text-gray-400 cursor-help" />
+                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                  <p className="mb-1">
+                    Actual remaining balance after expenses.
+                  </p>
+
+                  <p className="mb-1">
+                    Bank Balance - Bank Limit - Total Savings
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className={`text-xl font-bold ${
+                usableBalance >= 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              ₹{usableBalance.toLocaleString()}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white p-4 rounded-lg shadow-sm">
             <div className="text-sm text-gray-600">Bank Limit</div>
             <div className="flex items-center gap-2">
@@ -577,75 +649,6 @@ export default function FinancialExpenseTracker({
             </div>
             <div className="text-xl font-bold text-cyan-700">
               ₹{totalSavingsContributions.toLocaleString()}
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-              Current Bank Balance
-              <div className="group relative">
-                <Info size={14} className="text-gray-400 cursor-help" />
-                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
-                  Current bank amount including revenue added
-                </div>
-              </div>
-            </div>
-            <div className="text-xl font-bold text-indigo-600">
-              ₹{effectiveBankAmount.toLocaleString()}
-            </div>
-          </div>
-          <div className="bg-[#e3ede0] p-4 rounded-lg shadow-md">
-            <div className="flex flex-wrap items-center gap-2 mb-1 text-sm font-medium text-gray-900">
-              <h2 className="whitespace-normal break-words">Safe Balance</h2>
-              <div className="group relative">
-                <Info size={16} className="text-gray-900 cursor-help" />
-                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-lg py-2 px-4 z-10 w-72 sm:w-72 md:w-96 shadow-lg">
-                  <p className="mb-1">
-                    Amount safe to spend based on planned expenses.
-                  </p>
-                  <p className="mb-1">
-                    It shows how much you can spend without touching your bank
-                    limit and fulfiling the planned expenses.
-                  </p>
-                  <p className="mb-1">Usable Balance - Remaining Planned</p>
-                  <p className="mb-1">
-                    Scroll Bottom to see how this is calculated.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div
-              className={`text-xl font-bold ${
-                safeBalance >= 0 ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              ₹{safeBalance.toLocaleString()}
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-              Usable Balance
-              <div className="group relative">
-                <Info size={14} className="text-gray-400 cursor-help" />
-                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
-                  <p className="mb-1">
-                    Actual remaining balance after expenses.
-                  </p>
-
-                  <p className="mb-1">
-                    Bank Balance - Bank Limit - Total Savings
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div
-              className={`text-xl font-bold ${
-                usableBalance >= 0 ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              ₹{usableBalance.toLocaleString()}
             </div>
           </div>
         </div>
