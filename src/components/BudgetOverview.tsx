@@ -74,8 +74,6 @@ export default function FinancialExpenseTracker({
   const [editValue, setEditValue] = useState<string>("");
   const [showSavingsGoals, setShowSavingsGoals] = useState(false);
 
-  
-
   // Update internal state when props change
   useEffect(() => {
     setCurrentBankLimit(bankLimit);
@@ -85,8 +83,26 @@ export default function FinancialExpenseTracker({
     setPlannedAmounts((prev) => ({ ...prev, ...initialPlannedAmounts }));
   }, [initialPlannedAmounts]);
 
+  // Helper function to get current month transactions
+  const getCurrentMonthTransactions = () => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+
+    return transactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.date);
+      return (
+        transactionDate.getFullYear() === currentYear &&
+        transactionDate.getMonth() === currentMonth
+      );
+    });
+  };
+
+  // Get current month transactions
+  const currentMonthTransactions = getCurrentMonthTransactions();
+
   // Calculate actual spending per category from transactions
-  const actualSpendingPerCategory = transactions
+  const actualSpendingPerCategory = currentMonthTransactions
     .filter((t) => t.type === "expense" && t.category)
     .reduce((acc, transaction) => {
       const category = transaction.category!;
@@ -95,7 +111,7 @@ export default function FinancialExpenseTracker({
     }, {} as Record<string, number>);
 
   // Calculate total revenue from transactions
-  const totalRevenue = transactions
+  const totalRevenue = currentMonthTransactions
     .filter((t) => t.type === "revenue")
     .reduce((sum, transaction) => sum + transaction.amount, 0);
 
@@ -134,7 +150,7 @@ export default function FinancialExpenseTracker({
       return acc;
     }, {} as Record<string, number>);
 
-  // New total actual spent only on planned categories
+  // New total actual spent only on planned categories (current month)
   const totalActualSpentOnPlanned = Object.values(
     actualSpendingPerPlannedCategory
   ).reduce((sum, amount) => sum + amount, 0);
@@ -184,7 +200,7 @@ export default function FinancialExpenseTracker({
     setEditValue("");
   };
 
-  // Calculate spending trend (last 7 days vs previous 7 days)
+  // Calculate spending trend (last 7 days vs previous 7 days) - still using all transactions for trend analysis
   const getSpendingTrend = () => {
     const now = new Date();
     const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -277,14 +293,91 @@ export default function FinancialExpenseTracker({
 
   const statusInfo = getStatus();
 
+  // Helper function to get current month display
+  const getCurrentMonthDisplay = () => {
+    const now = new Date();
+    return now.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {/* Month Display */}
+      <div className="mb-4 text-center">
+        <h2 className="text-xl font-semibold text-gray-800">
+          Budget for {getCurrentMonthDisplay()}
+        </h2>
+        <p className="text-sm text-gray-600">
+          Budget resets automatically each month
+        </p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <h3 className="text-sm font-medium text-blue-800">
+            Total Planned Budget
+          </h3>
+          <p className="text-2xl font-bold text-blue-900">
+            ₹{totalPlanned.toLocaleString()}
+          </p>
+        </div>
+
+        <div className="bg-red-50 p-4 rounded-lg">
+          <h3 className="text-sm font-medium text-red-800">Spent This Month</h3>
+          <p className="text-2xl font-bold text-red-900">
+            ₹{totalActualSpentOnPlanned.toLocaleString()}
+          </p>
+        </div>
+
+        <div className="bg-green-50 p-4 rounded-lg">
+          <h3 className="text-sm font-medium text-green-800">
+            Remaining Budget
+          </h3>
+          <p className="text-2xl font-bold text-green-900">
+            ₹{remainingPlanned.toLocaleString()}
+          </p>
+        </div>
+      </div>
+      {/* Progress Bar */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-medium text-gray-700">
+            Budget Progress
+          </span>
+          <span className="text-sm text-gray-500">
+            {totalPlanned > 0
+              ? Math.round((totalActualSpentOnPlanned / totalPlanned) * 100)
+              : 0}
+            %
+          </span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div
+            className={`h-2.5 rounded-full ${
+              totalPlanned > 0 && totalActualSpentOnPlanned / totalPlanned > 0.8
+                ? "bg-red-600"
+                : totalPlanned > 0 &&
+                  totalActualSpentOnPlanned / totalPlanned > 0.6
+                ? "bg-yellow-600"
+                : "bg-green-600"
+            }`}
+            style={{
+              width: `${
+                totalPlanned > 0
+                  ? Math.min(
+                      (totalActualSpentOnPlanned / totalPlanned) * 100,
+                      100
+                    )
+                  : 0
+              }%`,
+            }}
+          ></div>
+        </div>
+      </div>
       {/* Bank Summary Card */}
       <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-xl shadow-lg border border-blue-200">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <BadgeDollarSign className="text-blue-600" />
-            Financial Overview
+            Budget Overview
           </h2>
           <div className="flex items-center gap-3">
             {/* <button
@@ -412,7 +505,8 @@ export default function FinancialExpenseTracker({
                     limit and fulfiling the planned expenses.
                   </p>
                   <p className="mb-1">
-                    Bank Balance - Bank Limit - Total Savings - Remaining Planned
+                    Usable Balance - Remaining
+                    Planned
                   </p>
                   <p className="mb-1">
                     Scroll Bottom to see how this is calculated.
