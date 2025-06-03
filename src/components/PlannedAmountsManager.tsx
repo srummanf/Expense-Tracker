@@ -1,3 +1,5 @@
+// Budget Planning Manager Component
+
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -148,7 +150,7 @@ const PlannedAmountsManager: React.FC<PlannedAmountsManagerProps> = ({
         animate={{ opacity: 1, y: 0 }}
         className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-3">
               <Target className="w-8 h-8" />
@@ -158,21 +160,22 @@ const PlannedAmountsManager: React.FC<PlannedAmountsManagerProps> = ({
               Set and manage your spending targets for each category
             </p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsEditing(!isEditing)}
-            className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
-              isEditing
-                ? "bg-green-500 hover:bg-green-600 shadow-lg"
-                : "bg-white/20 hover:bg-white/30 backdrop-blur-sm"
-            }`}
-          >
-            {isEditing ? <Check size={20} /> : <Edit3 size={20} />}
-            <span>{isEditing ? "Save Changes" : "Edit Budgets"}</span>
-          </motion.button>
         </div>
       </motion.div>
+      {/* Place the edit/save button as a floating action at bottom right for easy access */}
+      <div className="fixed bottom-8 right-8 z-40">
+        <motion.button
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => setIsEditing(!isEditing)}
+          className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium shadow-lg transition-all text-white text-lg
+            ${isEditing ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"}
+          `}
+        >
+          {isEditing ? <Check size={24} /> : <Edit3 size={24} />}
+          <span>{isEditing ? "Save Changes" : "Edit"}</span>
+        </motion.button>
+      </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -474,7 +477,7 @@ const PlannedAmountsManager: React.FC<PlannedAmountsManagerProps> = ({
                   <RefreshCw size={16} />
                   <span>Reset All</span>
                 </motion.button>
-                <motion.button
+                {/* <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={loadDefaultAmounts}
@@ -482,7 +485,7 @@ const PlannedAmountsManager: React.FC<PlannedAmountsManagerProps> = ({
                 >
                   <Save size={16} />
                   <span>Load Defaults</span>
-                </motion.button>
+                </motion.button> */}
               </div>
             </motion.div>
           )}
