@@ -274,6 +274,8 @@ function App() {
     "Amount Received",
     "Insurance",
     "Personal Care",
+    "SIP",
+    "EMI",
     "Other",
   ];
 

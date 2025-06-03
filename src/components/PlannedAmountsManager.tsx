@@ -394,7 +394,7 @@ const PlannedAmountsManager: React.FC<PlannedAmountsManagerProps> = ({
               exit={{ opacity: 0, height: 0 }}
               className="mt-8 pt-6 border-t border-gray-200"
             >
-              {/* Add Existing Categories */}
+              {/*    */}
               {unusedCategories.length > 0 && (
                 <div className="mb-6">
                   <h4 className="text-lg font-semibold text-gray-900 mb-3">
